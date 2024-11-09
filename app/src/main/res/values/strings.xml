@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">Study Notes</string>
-
+    <string name="app_name">MyMoney</string>
 
     <string name="label_title_profile">Profile</string>
     <string name="label_no_parcel_found">No parcel found</string>
@@ -13,5 +12,6 @@
     <string name="get_started">Get Started</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="title">Title</string>
 
 </resources>

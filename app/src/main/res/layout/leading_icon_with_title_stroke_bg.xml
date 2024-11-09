@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/rounded_stroke_bg"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:padding="@dimen/size_8"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/tv_record_type">
+
+    <ImageView
+        android:id="@+id/leading_icon"
+        android:layout_gravity="center"
+        android:layout_height="@dimen/size_16"
+        android:layout_width="@dimen/size_16"
+        android:src="@drawable/icon_calendar" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/text_size_8"
+        android:layout_width="wrap_content"
+        android:text="Today's Date"
+        android:textColor="@color/black"/>
+
+</LinearLayout>

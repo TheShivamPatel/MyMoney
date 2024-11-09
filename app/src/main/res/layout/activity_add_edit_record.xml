@@ -1,65 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".addEditRecord.AddEditRecordActivity"
-    android:padding="@dimen/text_size_16">
-
-    <ImageButton
-        android:id="@+id/negative_img_btn"
-        android:layout_width="@dimen/size_22"
-        android:layout_height="@dimen/size_22"
-        android:background="@android:color/transparent"
-        android:src="@drawable/icon_plus"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_record_type"
-        android:layout_width="116dp"
-        android:layout_height="19dp"
-        android:text="Add new Record"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_size_16"
-        app:layout_constraintEnd_toStartOf="@+id/positive_image_btn"
-        app:layout_constraintStart_toEndOf="@+id/negative_img_btn"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/positive_image_btn"
-        android:layout_width="@dimen/size_22"
-        android:layout_height="@dimen/size_22"
-        android:background="@android:color/transparent"
-        android:src="@drawable/icon_check"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:orientation="vertical"
+    android:padding="@dimen/text_size_16"
+    tools:context=".addEditRecord.AddEditRecordActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@drawable/rounded_stroke_bg"
-        android:padding="@dimen/size_4"
-        android:layout_marginTop="@dimen/size_20"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_record_type" >
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:layout_width="@dimen/size_16"
-            android:layout_height="@dimen/size_16"
-            android:src="@drawable/icon_calendar"
-            android:layout_gravity="center"/>
-
-        <TextView
+        <include
+            android:id="@+id/action_close"
+            layout="@layout/leading_icon_with_text"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Today's Date"
-            android:layout_marginStart="@dimen/text_size_8"
-            android:layout_gravity="center"/>
+            android:layout_weight="1" />
+
+        <include
+            android:id="@+id/action_save"
+            layout="@layout/leading_icon_with_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/date_time_picker_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_32"
+        android:orientation="horizontal"
+        tools:layout_editor_absoluteX="16dp">
+
+        <include
+            android:id="@+id/pick_date_layout"
+            layout="@layout/leading_icon_with_title_stroke_bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size_8"
+            android:layout_weight="1" />
+
+        <include
+            android:id="@+id/pick_time_layout"
+            layout="@layout/leading_icon_with_title_stroke_bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/edt_amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_22"
+        android:background="@drawable/rounded_stroke_bg"
+        android:gravity="center"
+        android:hint="0.0"
+        android:inputType="number"
+        android:padding="@dimen/size_16"
+        android:textSize="@dimen/text_size_40" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chips_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:singleSelection="true"
+        android:layout_marginTop="@dimen/size_22">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/option_1"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Income" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/option_2"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:checked="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Expense" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/option_3"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Transfer" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <LinearLayout
+        android:id="@+id/account_category_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_22"
+        android:orientation="horizontal">
+
+        <include
+            android:id="@+id/select_type_1"
+            layout="@layout/leading_icon_title_selectable_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size_8"
+            android:layout_weight="1" />
+
+        <include
+            android:id="@+id/select_type_2"
+            layout="@layout/leading_icon_title_selectable_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/edt_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_22"
+        android:background="@drawable/rounded_stroke_bg"
+        android:gravity="start"
+        android:hint="Notes"
+        android:minHeight="@dimen/size_120"
+        android:padding="@dimen/text_size_12"
+        android:textSize="@dimen/text_size_14" />
+
+</LinearLayout>

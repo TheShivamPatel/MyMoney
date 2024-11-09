@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/positive_image_btn"
+        android:layout_width="@dimen/size_18"
+        android:layout_height="@dimen/size_18"
+        android:scaleType="fitCenter"
+        android:background="@android:color/transparent"
+        android:src="@drawable/icon_check"/>
+
+    <TextView
+        android:id="@+id/tv_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:textSize="@dimen/text_size_16"
+        android:layout_marginStart="@dimen/text_size_8"
+        android:fontFamily="@font/montserrat_medium"
+        android:textColor="@color/black"/>
+
+</LinearLayout>
