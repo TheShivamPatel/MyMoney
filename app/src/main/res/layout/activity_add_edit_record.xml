@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".addEditRecord.AddEditRecordActivity"
+    android:padding="@dimen/text_size_16">
+
+    <ImageButton
+        android:id="@+id/negative_img_btn"
+        android:layout_width="@dimen/size_22"
+        android:layout_height="@dimen/size_22"
+        android:background="@android:color/transparent"
+        android:src="@drawable/icon_plus"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_record_type"
+        android:layout_width="116dp"
+        android:layout_height="19dp"
+        android:text="Add new Record"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_16"
+        app:layout_constraintEnd_toStartOf="@+id/positive_image_btn"
+        app:layout_constraintStart_toEndOf="@+id/negative_img_btn"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/positive_image_btn"
+        android:layout_width="@dimen/size_22"
+        android:layout_height="@dimen/size_22"
+        android:background="@android:color/transparent"
+        android:src="@drawable/icon_check"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/rounded_stroke_bg"
+        android:padding="@dimen/size_4"
+        android:layout_marginTop="@dimen/size_20"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_record_type" >
+
+        <ImageView
+            android:layout_width="@dimen/size_16"
+            android:layout_height="@dimen/size_16"
+            android:src="@drawable/icon_calendar"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Today's Date"
+            android:layout_marginStart="@dimen/text_size_8"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

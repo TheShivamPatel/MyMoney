@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Study Notes</string>
+
+
+    <string name="label_title_profile">Profile</string>
+    <string name="label_no_parcel_found">No parcel found</string>
+    <string name="label_request_parcel">Please request a parcel for listing</string>
+    <string name="label_try_again">Try again!</string>
+    <string name="label_no_messages">No messages</string>
+    <string name="label_no_active_chats">You have no active chats</string>
+    <string name="label_something_went_wrong">Something went wrong, Please try again!!</string>
+    <string name="label_no_internet">No internet connection</string>
+    <string name="get_started">Get Started</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+</resources>

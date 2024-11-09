@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFF</color>
+
+
+    <color name="cyan_100">#EDFAFEFF</color>
+    <color name="cyan_200">#EDF7F8</color>
+    <color name="cyan_300">#4048ABB8</color>
+    <color name="cyan_400">#48ABB8</color>
+    <color name="cyan_600">#45C4B0</color>
+    <color name="primary_dark_color">#012030</color>
+
+    <color name="purple_100">#F1E7FF</color>
+    <color name="purple_400">#7210FF</color>
+
+
+    <color name="grey_100">#F5F6FB</color>
+    <color name="grey_200">#EEEEEE</color>
+    <color name="grey_300">#E0E0E0</color>
+    <color name="grey_400">#9E9E9E</color>
+    <color name="grey_500">#919191</color>
+    <color name="grey_600">#7B7878</color>
+    <color name="grey_800">#424242</color>
+    <color name="grey_900">#131616</color>
+
+
+    <color name="red_100">#15F75555</color>
+    <color name="red_400">#F75555</color>
+    <color name="red_500">#F52D2D</color>
+
+
+    <color name="orange_100">#33FACC15</color>
+    <color name="orange_500">#FF981F</color>
+
+    <color name="green_100">#264ADE80</color>
+    <color name="green_500">#4AAF57</color>
+    <color name="green_400">#44CD76</color>
+
+    <color name="blue_500">#359FFF</color>
+
+
+    <color name="color_golden">#FFEB3B</color>
+
+
+    <color name="color_transparent">#00000000</color>
+
+
+</resources>
