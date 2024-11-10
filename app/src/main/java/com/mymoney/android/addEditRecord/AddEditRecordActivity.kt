@@ -4,9 +4,13 @@ import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.mymoney.android.R
+import com.mymoney.android.addEditRecord.viewmodel.AddEditRecordViewModel
+import com.mymoney.android.roomDB.data.TransactionType
 import com.mymoney.android.databinding.ActivityAddEditRecordBinding
 import com.mymoney.android.databinding.LeadingIconTitleSelectableViewBinding
 import com.mymoney.android.databinding.LeadingIconWithTextBinding
@@ -20,6 +24,7 @@ import java.util.Locale
 class AddEditRecordActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddEditRecordBinding
+    private lateinit var viewModel: AddEditRecordViewModel
     private var selectedTransactionType: TransactionType? = null
     private var pickedDate: String? = null
     private var pickedTime: String? = null
@@ -29,13 +34,30 @@ class AddEditRecordActivity : AppCompatActivity() {
         binding = ActivityAddEditRecordBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        viewModel = ViewModelProvider(this)[AddEditRecordViewModel::class.java]
+        setUpObservers()
         setUpTopActions()
         setUpChipGroup()
         setUpDateAndTime()
         setUpSelectType()
     }
 
-    private fun setUpTopActions() {
+    private fun setUpObservers() {
+        viewModel.pickedDate.observe(this, Observer { date ->
+            binding.pickDateLayout.title.text = date
+        })
+
+        viewModel.pickedTime.observe(this, Observer { time ->
+            binding.pickTimeLayout.title.text = time
+        })
+
+        viewModel.transactionType.observe(this, Observer { type ->
+            selectedTransactionType = type
+        })
+
+    }
+
+        private fun setUpTopActions() {
 
         bindActionButtons(
             leadingIconWithTextBinding = binding.actionClose,
@@ -61,7 +83,7 @@ class AddEditRecordActivity : AppCompatActivity() {
 
         bindDateAndTimeSelector(
             dateTimeSelector = binding.pickDateLayout,
-            textRes = getCurrentDateFormatted(),
+            textRes = viewModel.pickedDate.value.toString(),
             iconRes = R.drawable.icon_calendar,
             context = this
         ) {
@@ -70,7 +92,7 @@ class AddEditRecordActivity : AppCompatActivity() {
 
         bindDateAndTimeSelector(
             dateTimeSelector = binding.pickTimeLayout,
-            textRes = getCurrentTimeFormatted(),
+            textRes = viewModel.pickedTime.value.toString(),
             iconRes = R.drawable.icon_clock,
             context = this
         ) {
@@ -202,56 +224,28 @@ class AddEditRecordActivity : AppCompatActivity() {
         datePicker.show(supportFragmentManager, "DatePicker")
 
         datePicker.addOnPositiveButtonClickListener {
-            val dateFormatter = SimpleDateFormat("dd MMM, yyyy")
+            val dateFormatter = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
             val date = dateFormatter.format(Date(it))
-            pickedDate = date
-            ViewUtils.showToast(this, "$date is selected")
-            binding.pickDateLayout.title.text = pickedDate
+            viewModel.setPickedDate(date)
         }
     }
 
 
     private fun timePicker() {
-        val timePicker = MaterialTimePicker.Builder()
-            .setTitleText("Select a time")
-            .build()
-
+        val timePicker = MaterialTimePicker.Builder().setTitleText("Select a time").build()
         timePicker.show(supportFragmentManager, "TIME_PICKER")
 
         timePicker.addOnPositiveButtonClickListener {
             val hour = timePicker.hour
             val minute = timePicker.minute
-
             val timeFormatter = SimpleDateFormat("hh:mm a", Locale.getDefault())
             val calendar = Calendar.getInstance()
             calendar.set(Calendar.HOUR_OF_DAY, hour)
             calendar.set(Calendar.MINUTE, minute)
 
             val formattedTime = timeFormatter.format(calendar.time)
-
-            pickedTime = formattedTime
-            binding.pickTimeLayout.title.text = pickedTime ?: "Time not selected"
+            viewModel.setPickedTime(formattedTime)
         }
     }
 
-
-
-    private fun getCurrentDateFormatted(): String {
-        val dateFormatter = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
-        val currentDate = Date()
-        return dateFormatter.format(currentDate)
-    }
-
-    private fun getCurrentTimeFormatted(): String {
-        val timeFormatter = SimpleDateFormat("hh:mm a", Locale.getDefault())
-        val currentDate = Date()
-        return timeFormatter.format(currentDate)
-    }
-
-}
-
-enum class TransactionType {
-    INCOME,
-    EXPENSE,
-    TRANSFER
 }
