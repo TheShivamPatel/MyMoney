@@ -41,7 +41,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
-
     </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -60,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/size_16"
                 android:layout_marginTop="@dimen/size_20"
-                android:text="Income categories" />
+                android:text="Accounts" />
 
             <View
                 android:layout_width="match_parent"
@@ -69,27 +68,7 @@
                 android:background="@color/green_500" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_income_categories"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:padding="@dimen/size_16" />
-
-            <TextView
-                style="@style/headlineMedium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Expense categories" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="@dimen/size_6"
-                android:background="@color/green_500" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_expense_categories"
+                android:id="@+id/accounts_rv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"

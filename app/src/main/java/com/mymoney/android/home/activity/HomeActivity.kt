@@ -63,12 +63,12 @@ class HomeActivity : AppCompatActivity() {
                 true
             ),
             TabItem(
-                "Budgets",
-                ContextCompat.getDrawable(applicationContext, R.drawable.icon_calculator)
-            ),
-            TabItem(
                 "Analysis",
                 ContextCompat.getDrawable(applicationContext, R.drawable.icon_pie_chart)
+            ),
+            TabItem(
+                "Accounts",
+                ContextCompat.getDrawable(applicationContext, R.drawable.icon_wallet)
             ),
             TabItem(
                 "Category",

@@ -10,7 +10,7 @@ import com.mymoney.android.databinding.FragmentAnalysisBinding
 
 class AnalysisFragment : Fragment(R.layout.fragment_analysis) {
 
-    lateinit var binding: FragmentAnalysisBinding
+    private lateinit var binding: FragmentAnalysisBinding
 
     companion object {
         fun newInstance(): AnalysisFragment {

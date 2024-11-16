@@ -4,13 +4,16 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.mymoney.android.roomDB.daos.AccountDao
 import com.mymoney.android.roomDB.daos.CategoryDao
+import com.mymoney.android.roomDB.data.Account
 import com.mymoney.android.roomDB.data.Category
 
-@Database(entities = [Category::class], version = 1)
+@Database(entities = [Category::class, Account::class], version = 1)
 abstract class MyMoneyDatabase : RoomDatabase(){
 
     abstract fun categoryDao() : CategoryDao
+    abstract fun accountDao() : AccountDao
 
     companion object {
 

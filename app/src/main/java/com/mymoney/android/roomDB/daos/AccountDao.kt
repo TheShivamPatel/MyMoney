@@ -29,4 +29,10 @@ interface AccountDao {
 
     @Query("SELECT balance FROM mymoney_account_table WHERE id = :id")
     suspend fun getBalanceByAccountId(id: Int): Double?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAccountList(accountList: List<Account>)
+
+    @Query("SELECT COUNT(*) FROM mymoney_account_table")
+    suspend fun getAccountCount(): Int
 }

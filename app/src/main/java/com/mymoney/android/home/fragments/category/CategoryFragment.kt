@@ -1,7 +1,6 @@
 package com.mymoney.android.home.fragments.category
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,9 +16,7 @@ import com.mymoney.android.home.fragments.category.viewmodel.CategoryViewModel
 import com.mymoney.android.home.fragments.category.viewmodel.CategoryViewModelProvider
 import com.mymoney.android.roomDB.daos.CategoryDao
 import com.mymoney.android.roomDB.data.Category
-import com.mymoney.android.roomDB.data.CategoryType
 import com.mymoney.android.roomDB.database.MyMoneyDatabase
-import com.mymoney.android.utils.CategoryIcon
 
 class CategoryFragment : Fragment(R.layout.fragment_category) {
 
@@ -63,7 +60,6 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
         binding.rvIncomeCategories.layoutManager = LinearLayoutManager(context)
         binding.rvExpenseCategories.layoutManager = LinearLayoutManager(context)
 
-
         viewModel.incomeCategory.observe(viewLifecycleOwner, Observer { categoryList ->
             incomeCategoryAdapter = context?.let {
                 CategoryAdapter(it, categoryList) { category ->
@@ -87,6 +83,4 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
     private fun deleteCategory(category: Category) {
         viewModel.deleteCategory(category)
     }
-
-
 }

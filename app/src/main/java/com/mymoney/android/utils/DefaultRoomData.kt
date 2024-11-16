@@ -1,7 +1,19 @@
 package com.mymoney.android.utils
 
+import com.mymoney.android.roomDB.data.Account
 import com.mymoney.android.roomDB.data.Category
 import com.mymoney.android.roomDB.data.CategoryType
+
+object DefaultAccounts {
+    fun getAccounts() : List<Account> {
+        return listOf(
+            Account(name = "Cash", balance = 0.0),
+            Account(name = "Card", balance = 0.0),
+            Account(name = "Savings", balance = 0.0),
+        )
+    }
+}
+
 
 object DefaultCategories {
 
