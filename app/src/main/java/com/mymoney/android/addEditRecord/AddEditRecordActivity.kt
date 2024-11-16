@@ -2,6 +2,7 @@ package com.mymoney.android.addEditRecord
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -15,6 +16,8 @@ import com.mymoney.android.databinding.ActivityAddEditRecordBinding
 import com.mymoney.android.databinding.LeadingIconTitleSelectableViewBinding
 import com.mymoney.android.databinding.LeadingIconWithTextBinding
 import com.mymoney.android.databinding.LeadingIconWithTitleStrokeBgBinding
+import com.mymoney.android.popUpFragments.accountsBottomSheet.AccountsBottomSheet
+import com.mymoney.android.popUpFragments.categoriesBottomSheet.CategoriesBottomSheet
 import com.mymoney.android.viewUtils.ViewUtils
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -111,7 +114,11 @@ class AddEditRecordActivity : AppCompatActivity() {
                     titleRes = "From Account",
                     subTitleRes = "Choose Account",
                     context = this
-                ) {}
+                ) {
+                    AccountsBottomSheet(){
+                        ViewUtils.showToast(this, "$it Selected")
+                    }.show(supportFragmentManager, "AccountsBottomSheet")
+                }
 
                 bindSelectTypeOptions(
                     leadingIconTitleSelectableViewBinding = binding.selectType2,
@@ -119,7 +126,11 @@ class AddEditRecordActivity : AppCompatActivity() {
                     titleRes = "To Account",
                     subTitleRes = "Choose Account",
                     context = this
-                ) {}
+                ) {
+                    AccountsBottomSheet(){
+                        ViewUtils.showToast(this, "$it Selected")
+                    }.show(supportFragmentManager, "AccountsBottomSheet")
+                }
             }
             else -> {
                 bindSelectTypeOptions(
@@ -128,7 +139,11 @@ class AddEditRecordActivity : AppCompatActivity() {
                     titleRes = "Account",
                     subTitleRes = "Choose Account",
                     context = this
-                ) {}
+                ) {
+                    AccountsBottomSheet(){
+                        ViewUtils.showToast(this, "$it Selected")
+                    }.show(supportFragmentManager, "AccountsBottomSheet")
+                }
 
                 bindSelectTypeOptions(
                     leadingIconTitleSelectableViewBinding = binding.selectType2,
@@ -136,7 +151,11 @@ class AddEditRecordActivity : AppCompatActivity() {
                     titleRes = "Category",
                     subTitleRes = "Choose Category",
                     context = this
-                ) {}
+                ) {
+                    CategoriesBottomSheet(){
+                        ViewUtils.showToast(this, "$it Selected")
+                    }.show(supportFragmentManager, "CategoriesBottomSheet")
+                }
             }
         }
     }
