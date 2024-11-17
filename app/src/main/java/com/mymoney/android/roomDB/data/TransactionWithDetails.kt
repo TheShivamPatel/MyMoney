@@ -3,16 +3,16 @@ package com.mymoney.android.roomDB.data
 import androidx.room.Embedded
 import androidx.room.Relation
 
-//data class TransferRecordDetails(
+//data class TransactionWithDetails(
 //    @Embedded val transaction: Transaction,
 //    @Relation(
-//        parentColumn = "from_account_id",
+//        parentColumn = "category_id",
 //        entityColumn = "id"
 //    )
-//    val fromAccount: Account?,
+//    val category: Category?,
 //    @Relation(
-//        parentColumn = "to_account_id",
+//        parentColumn = "account_id",
 //        entityColumn = "id"
 //    )
-//    val toAccount: Account?
+//    val account: Account?
 //)

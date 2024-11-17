@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import com.mymoney.android.R
 import com.mymoney.android.databinding.ActivityHomeScreenBinding
+import com.mymoney.android.roomDB.database.MyMoneyDatabase
 import com.mymoney.android.viewUtils.ViewUtils
 import com.mymoney.android.viewUtils.setBottomNavWithViewPager
 import com.piikeup.consumer.home.activity.TabItem
@@ -15,11 +16,10 @@ import com.piikeup.consumer.home.activity.adapter.HomePageAdapter
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeScreenBinding
-
+    private var database: MyMoneyDatabase? = null
     private val adapter by lazy {
         HomePageAdapter(supportFragmentManager)
     }
-
     private var currentTabSelectedPosition = 0
     private val pageSelectedListener = object : ViewPager.SimpleOnPageChangeListener() {
         override fun onPageSelected(position: Int) {
@@ -32,12 +32,15 @@ class HomeActivity : AppCompatActivity() {
         backPressed()
         binding = ActivityHomeScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        setUpRoomDB()
         setUpStatusBar()
         setUpTabs()
         setUpBottomNavigationMenu()
     }
 
+    private fun setUpRoomDB() {
+        database = MyMoneyDatabase.getDatabase(this)
+    }
 
     private fun backPressed() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {

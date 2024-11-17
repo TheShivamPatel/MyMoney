@@ -1,17 +1,23 @@
 package com.mymoney.android.addEditRecord.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.mymoney.android.addEditRecord.repository.TransactionRepository
+import com.mymoney.android.roomDB.data.Transaction
 import com.mymoney.android.roomDB.data.TransactionType
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class AddEditRecordViewModel() : ViewModel() {
+class AddEditRecordViewModel(private val repo: TransactionRepository) : ViewModel() {
 
     private val _pickedDate = MutableLiveData<String>()
-    val pickedDate : LiveData<String>  get() = _pickedDate
+    val pickedDate: LiveData<String> get() = _pickedDate
 
     private val _pickedTime = MutableLiveData<String>()
     val pickedTime: LiveData<String> get() = _pickedTime
@@ -19,12 +25,28 @@ class AddEditRecordViewModel() : ViewModel() {
     private val _transactionType = MutableLiveData<TransactionType>()
     val transactionType: LiveData<TransactionType> get() = _transactionType
 
+    private val _selectedType1 = MutableLiveData<Int>()
+    val selectedType1: LiveData<Int> get() = _selectedType1
+
+    private val _selectedType2 = MutableLiveData<Int>()
+    val selectedType2: LiveData<Int> get() = _selectedType2
+
     fun setPickedDate(date: String) {
         _pickedDate.value = date
     }
 
     fun setPickedTime(time: String) {
         _pickedTime.value = time
+    }
+
+    fun setPickedType1Value(id: Int) {
+        _selectedType1.value = id
+        Log.d("zzz", id.toString())
+    }
+
+    fun setPickedType2Value(id: Int) {
+        _selectedType2.value = id
+        Log.d("zzz", id.toString())
     }
 
     fun setTransactionType(type: TransactionType) {
@@ -48,4 +70,18 @@ class AddEditRecordViewModel() : ViewModel() {
         _pickedTime.value = getCurrentTimeFormatted()
     }
 
+    fun saveTransaction(transaction: Transaction) {
+        Log.d("zzz", transaction.toString())
+        viewModelScope.launch {
+            repo.insertTransaction(transaction)
+        }
+    }
+
+}
+
+class AddEditRecordViewModelProvider(private val repo: TransactionRepository) :
+    ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return AddEditRecordViewModel(repo) as T
+    }
 }

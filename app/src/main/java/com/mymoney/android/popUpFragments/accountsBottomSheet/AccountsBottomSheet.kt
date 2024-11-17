@@ -56,6 +56,7 @@ class AccountsBottomSheet(private val onSelectAccount: (account: Account) -> Uni
         viewModel.allAccounts.observe(viewLifecycleOwner, Observer { accountList ->
             selectAccountsAdapter = SelectAccountsAdapter(accountList) { account ->
                 onSelectAccount(account)
+                dismiss()
             }
             binding.accountsRv.adapter = selectAccountsAdapter
         })

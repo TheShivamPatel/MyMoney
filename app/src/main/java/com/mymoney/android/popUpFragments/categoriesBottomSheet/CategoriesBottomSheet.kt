@@ -59,6 +59,7 @@ class CategoriesBottomSheet(private val onSelectCategory: (category: Category) -
                 context?.let {
                     SelectCategoriesAdapter(categoryList) { category ->
                         onSelectCategory(category)
+                        dismiss()
                     }
                 }
             binding.categoriesRv.adapter = selectCategoryAdapter

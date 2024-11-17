@@ -4,12 +4,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center"
-    android:paddingVertical="@dimen/size_8">
+    android:paddingVertical="@dimen/size_16">
 
     <ImageView
         android:id="@+id/leadingImg"
-        android:layout_width="@dimen/size_40"
-        android:layout_height="@dimen/size_40"
+        android:layout_width="@dimen/size_30"
+        android:layout_height="@dimen/size_30"
         android:src="@drawable/ic_launcher_background"/>
 
     <TextView
