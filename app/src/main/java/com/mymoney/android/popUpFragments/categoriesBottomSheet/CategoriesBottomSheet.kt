@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mymoney.android.databinding.BottomSheetCategoriesBinding
 import com.mymoney.android.home.fragments.category.repository.CategoryRepository
@@ -18,7 +17,7 @@ import com.mymoney.android.roomDB.daos.CategoryDao
 import com.mymoney.android.roomDB.data.Category
 import com.mymoney.android.roomDB.database.MyMoneyDatabase
 
-class CategoriesBottomSheet(private val onSelectCategory: (category: Category) -> Unit) :
+class CategoriesBottomSheet(private val dialogType: DialogType, private val onSelectCategory: (category: Category) -> Unit) :
     BottomSheetDialogFragment() {
 
     private lateinit var binding: BottomSheetCategoriesBinding
@@ -54,16 +53,38 @@ class CategoriesBottomSheet(private val onSelectCategory: (category: Category) -
 
         binding.categoriesRv.layoutManager = GridLayoutManager(context, 3)
 
-        viewModel.expenseCategory.observe(viewLifecycleOwner, Observer { categoryList ->
-            selectCategoryAdapter =
-                context?.let {
-                    SelectCategoriesAdapter(categoryList) { category ->
-                        onSelectCategory(category)
-                        dismiss()
+        if(dialogType.name == DialogType.TYPE_EXTEND_EXPENSE.name){
+            viewModel.expenseCategory.observe(viewLifecycleOwner, Observer { categoryList ->
+                selectCategoryAdapter =
+                    context?.let {
+                        SelectCategoriesAdapter(categoryList) { category ->
+                            onSelectCategory(category)
+                            dismiss()
+                        }
                     }
-                }
-            binding.categoriesRv.adapter = selectCategoryAdapter
-        })
+                binding.categoriesRv.adapter = selectCategoryAdapter
+            })
+        }
+        else{
+            viewModel.incomeCategory.observe(viewLifecycleOwner, Observer { categoryList ->
+                selectCategoryAdapter =
+                    context?.let {
+                        SelectCategoriesAdapter(categoryList) { category ->
+                            onSelectCategory(category)
+                            dismiss()
+                        }
+                    }
+                binding.categoriesRv.adapter = selectCategoryAdapter
+            })
+        }
+    }
+
+    companion object {
+        const val TAG = "SelectCategoriesBottomSheet"
+
+        enum class DialogType {
+            TYPE_SELECT_INCOME, TYPE_EXTEND_EXPENSE
+        }
     }
 
 }

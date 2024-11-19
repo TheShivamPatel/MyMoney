@@ -170,11 +170,19 @@ class AddEditRecordActivity : AppCompatActivity() {
                     subTitleRes = "Choose Category",
                     context = this
                 ) {
-                    CategoriesBottomSheet() {
-                        ViewUtils.showToast(this, "$it Selected")
-                        binding.selectType2.tvSubtitle.text = it.name
-                        viewModel.setPickedType2Value(it.id)
-                    }.show(supportFragmentManager, "CategoriesBottomSheet")
+                    if (selectedTransactionType == TransactionType.EXPENSE) {
+                        CategoriesBottomSheet(CategoriesBottomSheet.Companion.DialogType.TYPE_EXTEND_EXPENSE) {
+                            ViewUtils.showToast(this, "$it Selected")
+                            binding.selectType2.tvSubtitle.text = it.name
+                            viewModel.setPickedType2Value(it.id)
+                        }.show(supportFragmentManager, "CategoriesBottomSheet")
+                    } else {
+                        CategoriesBottomSheet(CategoriesBottomSheet.Companion.DialogType.TYPE_SELECT_INCOME) {
+                            ViewUtils.showToast(this, "$it Selected")
+                            binding.selectType2.tvSubtitle.text = it.name
+                            viewModel.setPickedType2Value(it.id)
+                        }.show(supportFragmentManager, "CategoriesBottomSheet")
+                    }
                 }
             }
         }
@@ -341,8 +349,8 @@ class AddEditRecordActivity : AppCompatActivity() {
         return when (transactionType) {
             TransactionType.INCOME, TransactionType.EXPENSE -> {
                 TransactionIds(
-                    category_id = type1,
-                    account_id = type2,
+                    account_id = type1,
+                    category_id = type2,
                     from_account_id = null,
                     to_account_id = null
                 )
@@ -350,8 +358,8 @@ class AddEditRecordActivity : AppCompatActivity() {
 
             TransactionType.TRANSFER -> {
                 TransactionIds(
-                    category_id = null,
                     account_id = null,
+                    category_id = null,
                     from_account_id = type1,
                     to_account_id = type2
                 )
@@ -360,8 +368,8 @@ class AddEditRecordActivity : AppCompatActivity() {
     }
 
     data class TransactionIds(
-        val category_id: Int?,
         val account_id: Int?,
+        val category_id: Int?,
         val from_account_id: Int?,
         val to_account_id: Int?
     )

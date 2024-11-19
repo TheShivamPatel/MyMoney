@@ -2,6 +2,7 @@ package com.mymoney.android.home.fragments.records
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import com.mymoney.android.databinding.FragmentRecordsBinding
 import com.mymoney.android.home.fragments.records.adapter.RecordsAdapter
 import com.mymoney.android.home.fragments.records.viewModel.RecordsViewModel
 import com.mymoney.android.home.fragments.records.viewModel.RecordsViewModelProvider
+import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.RecordFilterBottomSheet
 import com.mymoney.android.roomDB.daos.TransactionDao
 import com.mymoney.android.roomDB.database.MyMoneyDatabase
 
@@ -57,13 +59,21 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
             RecordsViewModelProvider(repository!!)
         )[RecordsViewModel::class.java]
         setUpRecyclerView()
+        setUpOnClick()
+    }
+
+    private fun setUpOnClick() {
+        binding.filterLl.setOnClickListener {
+            activity?.supportFragmentManager?.let { it1 -> RecordFilterBottomSheet().show(it1, "RecordFilterBottomSheet") }
+        }
     }
 
     private fun setUpRecyclerView() {
         binding.recordsRv.layoutManager = LinearLayoutManager(context)
-        viewModel.allRecords.observe(viewLifecycleOwner, Observer { records ->
-            recordsAdapter = RecordsAdapter(records)
+        viewModel.allRecordsWithDetails.observe(viewLifecycleOwner, Observer { records ->
+            recordsAdapter = context?.let { RecordsAdapter(records, it) }
             binding.recordsRv.adapter = recordsAdapter
         })
     }
+
 }

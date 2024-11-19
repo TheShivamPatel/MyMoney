@@ -1,5 +1,6 @@
 package com.mymoney.android.home.fragments.records.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,16 +8,19 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mymoney.android.R
 import com.mymoney.android.databinding.RecordsItemBinding
-import com.mymoney.android.roomDB.data.Transaction
 import com.mymoney.android.roomDB.data.TransactionType
+import com.mymoney.android.roomDB.data.TransactionWithDetails
+import com.mymoney.android.utils.CategoryIcon
 
-class RecordsAdapter(private val recordsList: List<Transaction>) :
+class RecordsAdapter(private val recordsList: List<TransactionWithDetails>, private val context: Context) :
     RecyclerView.Adapter<RecordsAdapter.RecordsViewHolder>() {
 
     inner class RecordsViewHolder(private val binding: RecordsItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(record: Transaction) {
-            binding.titleTv.text = record.type
+        fun bind(record: TransactionWithDetails) {
+            if (record.type != TransactionType.TRANSFER.name){
+                binding.titleTv.text = record.categoryName
+            }
             binding.subtitleTv.text = record.type
 
             when (record.type) {
@@ -50,6 +54,17 @@ class RecordsAdapter(private val recordsList: List<Transaction>) :
                 binding.view2.visibility =  View.GONE
             }else{
                 binding.view2.visibility =  View.VISIBLE
+            }
+
+            if (record.type != TransactionType.TRANSFER.name) {
+                val categoryIcon = try {
+                    CategoryIcon.valueOf(record.categoryIcon!!)
+                } catch (e: IllegalArgumentException) {
+                    CategoryIcon.SALE
+                }
+                binding.imageView2.setImageDrawable(
+                    ContextCompat.getDrawable(context, categoryIcon.drawableId)
+                )
             }
         }
     }

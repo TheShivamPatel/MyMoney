@@ -27,6 +27,22 @@ enum class TransactionType {
     TRANSFER
 }
 
+data class TransactionWithDetails(
+    val transactionId: Int,
+    val date: String?,
+    val time: String?,
+    val amount: Double,
+    val type: String,
+    val categoryName: String?,
+    val categoryIcon: String?,
+    val categoryType: String?,
+    val accountName: String?,
+    val fromAccountName: String?,
+    val toAccountName: String?,
+    val note: String?
+)
+
+
 //foreignKeys = [
 //ForeignKey(
 //entity = Category::class,

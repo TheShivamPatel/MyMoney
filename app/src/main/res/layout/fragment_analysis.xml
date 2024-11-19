@@ -1,14 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.fragments.analysis.AnalysisFragment">
+    tools:context=".home.fragments.records.RecordsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_item"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/filter_ll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_8"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/backImgBtn"
+                android:layout_width="@dimen/size_18"
+                android:layout_height="@dimen/size_18"
+                android:background="@color/color_transparent"
+                android:scaleType="fitXY"
+                android:src="@drawable/icon_left_arrow" />
+
+            <TextView
+                style="@style/headlineMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/size_20"
+                android:text="November, 2024"
+                android:textColor="@color/primary_dark_color" />
+
+            <ImageButton
+                android:id="@+id/nextImgBtn"
+                android:layout_width="@dimen/size_18"
+                android:layout_height="@dimen/size_18"
+                android:background="@color/color_transparent"
+                android:scaleType="fitXY"
+                android:src="@drawable/icon_right_arrow" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/filterImg"
+            android:layout_width="@dimen/size_24"
+            android:layout_height="@dimen/size_24"
+            android:src="@drawable/icon_filter"
+            android:layout_marginEnd="@dimen/size_16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/summary_ll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello Analysis" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_16"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/filter_ll">
 
-</FrameLayout>
+        <include
+            layout="@layout/title_subtitle_vertical_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <include
+            layout="@layout/title_subtitle_vertical_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <include
+            layout="@layout/title_subtitle_vertical_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recordsOverviewRv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/size_16"
+        android:padding="@dimen/size_8"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/summary_ll"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
