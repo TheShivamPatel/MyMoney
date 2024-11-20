@@ -60,6 +60,13 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
         )[RecordsViewModel::class.java]
         setUpRecyclerView()
         setUpOnClick()
+        setUpAccountSummary()
+    }
+
+    private fun setUpAccountSummary() {
+        binding.accountSummary.setExpenseData("EXPENSE", 5000.0)
+        binding.accountSummary.setIncomeData("INCOME",15000.0)
+        binding.accountSummary.setThirdSectionData("BALANCE", 10000.0)
     }
 
     private fun setUpOnClick() {

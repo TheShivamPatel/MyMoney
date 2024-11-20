@@ -53,6 +53,12 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
             CategoryViewModelProvider(repository!!)
         )[CategoryViewModel::class.java]
         setUpRecyclerView()
+        setUpAccountSummary()
+    }
+
+    private fun setUpAccountSummary() {
+        binding.accountSummary.setExpenseData("EXPENSE SO FAR", 5000.0)
+        binding.accountSummary.setIncomeData("INCOME SO FAR",15000.0)
     }
 
     private fun setUpRecyclerView() {

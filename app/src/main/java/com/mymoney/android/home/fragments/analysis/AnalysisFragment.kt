@@ -53,7 +53,15 @@ class AnalysisFragment : Fragment(R.layout.fragment_analysis) {
             RecordsViewModelProvider(repository!!)
         )[RecordsViewModel::class.java]
         setUpRecyclerView()
+        setUpAccountSummary()
     }
+
+    private fun setUpAccountSummary() {
+        binding.accountSummary.setExpenseData("EXPENSE", 5000.0)
+        binding.accountSummary.setIncomeData("INCOME",15000.0)
+        binding.accountSummary.setThirdSectionData("BALANCE", 10000.0)
+    }
+
 
     private fun setUpRecyclerView() {
         binding.recordsOverviewRv.layoutManager = LinearLayoutManager(context)

@@ -49,6 +49,12 @@ class AccountsFragment : Fragment(R.layout.fragment_accounts) {
         repository = AccountsRepository(accountsDao)
         viewModel = ViewModelProvider(this, AccountsViewModelProvider(repository!!))[AccountsViewModel::class.java]
         setUpRecyclerview()
+        setUpAccountSummary()
+    }
+
+    private fun setUpAccountSummary() {
+        binding.accountSummary.setExpenseData("EXPENSE SO FAR", 5000.0)
+        binding.accountSummary.setIncomeData("INCOME SO FAR",15000.0)
     }
 
     private fun setUpRecyclerview() {
