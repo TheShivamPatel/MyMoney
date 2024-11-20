@@ -14,7 +14,9 @@ import com.mymoney.android.home.fragments.category.adapter.CategoryAdapter
 import com.mymoney.android.home.fragments.category.repository.CategoryRepository
 import com.mymoney.android.home.fragments.category.viewmodel.CategoryViewModel
 import com.mymoney.android.home.fragments.category.viewmodel.CategoryViewModelProvider
+import com.mymoney.android.home.repository.FinanceRepository
 import com.mymoney.android.roomDB.daos.CategoryDao
+import com.mymoney.android.roomDB.daos.TransactionDao
 import com.mymoney.android.roomDB.data.Category
 import com.mymoney.android.roomDB.database.MyMoneyDatabase
 
@@ -22,8 +24,10 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
 
     private lateinit var binding: FragmentCategoryBinding
     private lateinit var viewModel: CategoryViewModel
-    private var repository: CategoryRepository? = null
+    private lateinit var financeRepository: FinanceRepository
+    private lateinit var repository: CategoryRepository
     private lateinit var categoryDao: CategoryDao
+    private lateinit var transactionDao: TransactionDao
     private var incomeCategoryAdapter: CategoryAdapter? = null
     private var expenseCategoryAdapter: CategoryAdapter? = null
 
@@ -46,19 +50,29 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
 
         context?.let {
             categoryDao = MyMoneyDatabase.getDatabase(it).categoryDao()
+            transactionDao = MyMoneyDatabase.getDatabase(it).transactionDao()
         }
         repository = CategoryRepository(categoryDao)
+        financeRepository = FinanceRepository(transactionDao)
         viewModel = ViewModelProvider(
             this,
-            CategoryViewModelProvider(repository!!)
+            CategoryViewModelProvider(repository, financeRepository)
         )[CategoryViewModel::class.java]
         setUpRecyclerView()
         setUpAccountSummary()
     }
 
     private fun setUpAccountSummary() {
-        binding.accountSummary.setExpenseData("EXPENSE SO FAR", 5000.0)
-        binding.accountSummary.setIncomeData("INCOME SO FAR",15000.0)
+        viewModel.totalIncome.observe(viewLifecycleOwner, Observer { income ->
+            binding.accountSummary.setIncomeData("INCOME SO FAR", income)
+        })
+        viewModel.totalExpense.observe(viewLifecycleOwner, Observer { expense ->
+            binding.accountSummary.setExpenseData("EXPENSE SO FAR", expense)
+        })
+
+        viewModel.totalBalance.observe(viewLifecycleOwner, Observer { balance ->
+            binding.allAccountsBalanceTv.text = "[ All Accounts ₹${balance} ]"
+        })
     }
 
     private fun setUpRecyclerView() {

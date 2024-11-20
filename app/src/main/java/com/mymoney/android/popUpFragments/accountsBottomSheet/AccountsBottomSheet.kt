@@ -12,8 +12,10 @@ import com.mymoney.android.databinding.BottomSheetAccountsBinding
 import com.mymoney.android.home.fragments.account.repository.AccountsRepository
 import com.mymoney.android.home.fragments.account.viewmodel.AccountsViewModel
 import com.mymoney.android.home.fragments.account.viewmodel.AccountsViewModelProvider
+import com.mymoney.android.home.repository.FinanceRepository
 import com.mymoney.android.popUpFragments.accountsBottomSheet.adapter.SelectAccountsAdapter
 import com.mymoney.android.roomDB.daos.AccountDao
+import com.mymoney.android.roomDB.daos.TransactionDao
 import com.mymoney.android.roomDB.data.Account
 import com.mymoney.android.roomDB.database.MyMoneyDatabase
 
@@ -23,8 +25,10 @@ class AccountsBottomSheet(private val onSelectAccount: (account: Account) -> Uni
     private lateinit var binding: BottomSheetAccountsBinding
     private var selectAccountsAdapter: SelectAccountsAdapter? = null
     private lateinit var viewModel: AccountsViewModel
-    private var repository: AccountsRepository? = null
+    private lateinit var repository: AccountsRepository
+    private lateinit var financeRepository: FinanceRepository
     private lateinit var accountsDao: AccountDao
+    private lateinit var transactionDao: TransactionDao
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,11 +44,13 @@ class AccountsBottomSheet(private val onSelectAccount: (account: Account) -> Uni
 
         context?.let {
             accountsDao = MyMoneyDatabase.getDatabase(it).accountDao()
+            transactionDao = MyMoneyDatabase.getDatabase(it).transactionDao()
         }
         repository = AccountsRepository(accountsDao)
+        financeRepository = FinanceRepository(transactionDao)
         viewModel = ViewModelProvider(
             this,
-            AccountsViewModelProvider(repository!!)
+            AccountsViewModelProvider(repository, financeRepository)
         )[AccountsViewModel::class.java]
 
         setUpRecyclerView()

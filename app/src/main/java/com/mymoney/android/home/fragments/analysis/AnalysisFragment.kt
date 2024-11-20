@@ -15,6 +15,7 @@ import com.mymoney.android.home.fragments.analysis.adapter.RecordsAnalysisAdapte
 import com.mymoney.android.home.fragments.records.adapter.RecordsAdapter
 import com.mymoney.android.home.fragments.records.viewModel.RecordsViewModel
 import com.mymoney.android.home.fragments.records.viewModel.RecordsViewModelProvider
+import com.mymoney.android.home.repository.FinanceRepository
 import com.mymoney.android.roomDB.daos.TransactionDao
 import com.mymoney.android.roomDB.data.CategoryExpensePercentage
 import com.mymoney.android.roomDB.database.MyMoneyDatabase
@@ -23,7 +24,8 @@ class AnalysisFragment : Fragment(R.layout.fragment_analysis) {
 
     private lateinit var binding: FragmentAnalysisBinding
     private var adapter: RecordsAnalysisAdapter? = null
-    private var repository: TransactionRepository? = null
+    private lateinit var repository: TransactionRepository
+    private lateinit var financeRepository: FinanceRepository
     private lateinit var transactionDao: TransactionDao
     private lateinit var viewModel: RecordsViewModel
 
@@ -47,18 +49,24 @@ class AnalysisFragment : Fragment(R.layout.fragment_analysis) {
         context?.let {
             transactionDao = MyMoneyDatabase.getDatabase(it).transactionDao()
         }
+        financeRepository = FinanceRepository(transactionDao)
         repository = TransactionRepository(transactionDao)
         viewModel = ViewModelProvider(
             this,
-            RecordsViewModelProvider(repository!!)
+            RecordsViewModelProvider(repository, financeRepository)
         )[RecordsViewModel::class.java]
         setUpRecyclerView()
         setUpAccountSummary()
     }
 
     private fun setUpAccountSummary() {
-        binding.accountSummary.setExpenseData("EXPENSE", 5000.0)
-        binding.accountSummary.setIncomeData("INCOME",15000.0)
+
+        viewModel.totalIncome.observe(viewLifecycleOwner, Observer { income ->
+            binding.accountSummary.setIncomeData("INCOME", income ?: 0.0)
+        })
+        viewModel.totalExpense.observe(viewLifecycleOwner, Observer { expense ->
+            binding.accountSummary.setExpenseData("EXPENSE", expense ?: 0.0)
+        })
         binding.accountSummary.setThirdSectionData("BALANCE", 10000.0)
     }
 
@@ -78,7 +86,7 @@ class AnalysisFragment : Fragment(R.layout.fragment_analysis) {
                 )
             }.sortedByDescending { it.percentage }
 
-            adapter = context?.let { RecordsAnalysisAdapter(categoryPercentageList, context!!) }
+            adapter = context?.let { RecordsAnalysisAdapter(categoryPercentageList, requireContext()) }
             binding.recordsOverviewRv.adapter = adapter
         })
     }

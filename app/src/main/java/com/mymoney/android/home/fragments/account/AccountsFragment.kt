@@ -9,12 +9,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mymoney.android.R
+import com.mymoney.android.addEditRecord.repository.TransactionRepository
 import com.mymoney.android.databinding.FragmentAccountsBinding
 import com.mymoney.android.home.fragments.account.adapter.AccountsAdapter
 import com.mymoney.android.home.fragments.account.repository.AccountsRepository
 import com.mymoney.android.home.fragments.account.viewmodel.AccountsViewModel
 import com.mymoney.android.home.fragments.account.viewmodel.AccountsViewModelProvider
+import com.mymoney.android.home.repository.FinanceRepository
 import com.mymoney.android.roomDB.daos.AccountDao
+import com.mymoney.android.roomDB.daos.TransactionDao
 import com.mymoney.android.roomDB.data.Account
 import com.mymoney.android.roomDB.database.MyMoneyDatabase
 
@@ -22,7 +25,9 @@ class AccountsFragment : Fragment(R.layout.fragment_accounts) {
 
     private lateinit var binding: FragmentAccountsBinding
     private lateinit var viewModel: AccountsViewModel
-    private var repository: AccountsRepository? = null
+    private lateinit var repository: AccountsRepository
+    private lateinit var financeRepository: FinanceRepository
+    private lateinit var transactionDao: TransactionDao
     private lateinit var accountsDao: AccountDao
     private var accountAdapter: AccountsAdapter? = null
 
@@ -45,16 +50,25 @@ class AccountsFragment : Fragment(R.layout.fragment_accounts) {
 
         context?.let {
             accountsDao = MyMoneyDatabase.getDatabase(it).accountDao()
+            transactionDao = MyMoneyDatabase.getDatabase(it).transactionDao()
         }
         repository = AccountsRepository(accountsDao)
-        viewModel = ViewModelProvider(this, AccountsViewModelProvider(repository!!))[AccountsViewModel::class.java]
+        financeRepository = FinanceRepository(transactionDao)
+        viewModel = ViewModelProvider(this, AccountsViewModelProvider(repository, financeRepository))[AccountsViewModel::class.java]
         setUpRecyclerview()
         setUpAccountSummary()
     }
 
     private fun setUpAccountSummary() {
-        binding.accountSummary.setExpenseData("EXPENSE SO FAR", 5000.0)
-        binding.accountSummary.setIncomeData("INCOME SO FAR",15000.0)
+        viewModel.totalIncome.observe(viewLifecycleOwner, Observer { income ->
+            binding.accountSummary.setIncomeData("INCOME SO FAR", income)
+        })
+        viewModel.totalExpense.observe(viewLifecycleOwner, Observer { expense ->
+            binding.accountSummary.setExpenseData("EXPENSE SO FAR", expense)
+        })
+        viewModel.totalBalance.observe(viewLifecycleOwner, Observer { balance ->
+            binding.allAccountsBalanceTv.text = "[ All Accounts ₹${balance} ]"
+        })
     }
 
     private fun setUpRecyclerview() {

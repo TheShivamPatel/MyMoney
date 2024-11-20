@@ -32,18 +32,18 @@ class TotalIncomeExpenseSummary @JvmOverloads constructor(
         binding.section3.root.visibility = GONE
     }
 
-    fun setExpenseData(title: String, value: Double) {
+    fun setExpenseData(title: String, value: Double?) {
         binding.section1.titleTv.text = title
         binding.section1.subtitleTv.text = "-₹$value"
         binding.section1.subtitleTv.setTextColor(ContextCompat.getColor(context, R.color.red_400))
     }
 
-    fun setIncomeData(title: String, value: Double) {
+    fun setIncomeData(title: String, value: Double?) {
         binding.section2.titleTv.text = title
         binding.section2.subtitleTv.text = "₹$value"
     }
 
-    fun setThirdSectionData(title: String, value: Double) {
+    fun setThirdSectionData(title: String, value: Double?) {
         binding.section3.titleTv.text = title
         binding.section3.subtitleTv.text = "₹$value"
         binding.section3.root.visibility = VISIBLE

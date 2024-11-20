@@ -17,6 +17,7 @@ import com.mymoney.android.databinding.FragmentRecordsBinding
 import com.mymoney.android.home.fragments.records.adapter.RecordsAdapter
 import com.mymoney.android.home.fragments.records.viewModel.RecordsViewModel
 import com.mymoney.android.home.fragments.records.viewModel.RecordsViewModelProvider
+import com.mymoney.android.home.repository.FinanceRepository
 import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.RecordFilterBottomSheet
 import com.mymoney.android.roomDB.daos.TransactionDao
 import com.mymoney.android.roomDB.database.MyMoneyDatabase
@@ -25,7 +26,8 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
 
     private lateinit var binding: FragmentRecordsBinding
     private var recordsAdapter: RecordsAdapter? = null
-    private var repository: TransactionRepository? = null
+    private lateinit var repository: TransactionRepository
+    private lateinit var financeRepository: FinanceRepository
     private lateinit var transactionDao: TransactionDao
     private lateinit var viewModel: RecordsViewModel
 
@@ -53,10 +55,11 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
         context?.let {
             transactionDao = MyMoneyDatabase.getDatabase(it).transactionDao()
         }
+        financeRepository = FinanceRepository(transactionDao)
         repository = TransactionRepository(transactionDao)
         viewModel = ViewModelProvider(
             this,
-            RecordsViewModelProvider(repository!!)
+            RecordsViewModelProvider(repository, financeRepository)
         )[RecordsViewModel::class.java]
         setUpRecyclerView()
         setUpOnClick()
@@ -64,14 +67,23 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
     }
 
     private fun setUpAccountSummary() {
-        binding.accountSummary.setExpenseData("EXPENSE", 5000.0)
-        binding.accountSummary.setIncomeData("INCOME",15000.0)
+        viewModel.totalIncome.observe(viewLifecycleOwner, Observer { income ->
+            binding.accountSummary.setIncomeData("INCOME", income)
+        })
+        viewModel.totalExpense.observe(viewLifecycleOwner, Observer { expense ->
+            binding.accountSummary.setExpenseData("EXPENSE", expense)
+        })
         binding.accountSummary.setThirdSectionData("BALANCE", 10000.0)
     }
 
     private fun setUpOnClick() {
         binding.filterLl.setOnClickListener {
-            activity?.supportFragmentManager?.let { it1 -> RecordFilterBottomSheet().show(it1, "RecordFilterBottomSheet") }
+            activity?.supportFragmentManager?.let { it1 ->
+                RecordFilterBottomSheet().show(
+                    it1,
+                    "RecordFilterBottomSheet"
+                )
+            }
         }
     }
 

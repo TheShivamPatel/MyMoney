@@ -5,14 +5,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.mymoney.android.home.fragments.account.repository.AccountsRepository
+import com.mymoney.android.home.repository.FinanceRepository
 import com.mymoney.android.roomDB.data.Account
 import com.mymoney.android.roomDB.data.Category
+import com.mymoney.android.roomDB.data.TransactionType
 import com.mymoney.android.utils.DefaultAccounts
 import com.mymoney.android.utils.DefaultCategories
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class AccountsViewModel(private val repo: AccountsRepository) : ViewModel() {
+class AccountsViewModel(private val repo: AccountsRepository, private val financeRepository: FinanceRepository) : ViewModel() {
 
     val allAccounts: LiveData<List<Account>> = repo.getAllAccounts()
 
@@ -29,6 +31,11 @@ class AccountsViewModel(private val repo: AccountsRepository) : ViewModel() {
         }
     }
 
+    val totalIncome: LiveData<Double?> = financeRepository.getTotalIncome(TransactionType.INCOME.name)
+
+    val totalExpense: LiveData<Double?> = financeRepository.getTotalExpense(TransactionType.EXPENSE.name)
+
+    val totalBalance: LiveData<Double?> = financeRepository.getTotalBalance(TransactionType.INCOME.name, TransactionType.EXPENSE.name)
 
     fun addAccount(account: Account) {
         viewModelScope.launch {
@@ -54,8 +61,8 @@ class AccountsViewModel(private val repo: AccountsRepository) : ViewModel() {
 
 }
 
-class AccountsViewModelProvider(private val repo: AccountsRepository) : ViewModelProvider.Factory {
+class AccountsViewModelProvider(private val repo: AccountsRepository, private val financeRepository: FinanceRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return AccountsViewModel(repo) as T
+        return AccountsViewModel(repo, financeRepository) as T
     }
 }

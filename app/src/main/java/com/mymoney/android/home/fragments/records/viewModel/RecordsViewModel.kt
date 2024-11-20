@@ -4,12 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.mymoney.android.addEditRecord.repository.TransactionRepository
+import com.mymoney.android.home.repository.FinanceRepository
 import com.mymoney.android.roomDB.data.CategoryExpenseSummary
 import com.mymoney.android.roomDB.data.Transaction
 import com.mymoney.android.roomDB.data.TransactionType
 import com.mymoney.android.roomDB.data.TransactionWithDetails
 
-class RecordsViewModel(private val repo: TransactionRepository) : ViewModel() {
+class RecordsViewModel(private val repo: TransactionRepository, private val financeRepository: FinanceRepository) : ViewModel() {
 
     val allRecords: LiveData<List<Transaction>> = repo.getAllTransactions()
 
@@ -19,17 +20,14 @@ class RecordsViewModel(private val repo: TransactionRepository) : ViewModel() {
 
     val allTotalExpensesByCategory : LiveData<List<CategoryExpenseSummary>> = repo.getTotalByCategory(TransactionType.EXPENSE.name)
 
-    fun getTotalIncome(): LiveData<Double?> {
-        return repo.getTotalIncome()
-    }
+    val totalIncome: LiveData<Double?> = financeRepository.getTotalIncome(TransactionType.INCOME.name)
 
-    fun getTotalExpense(): LiveData<Double?> {
-        return repo.getTotalExpense()
-    }
+    val totalExpense: LiveData<Double?> = financeRepository.getTotalExpense(TransactionType.EXPENSE.name)
+
 }
 
-class RecordsViewModelProvider(private val repo: TransactionRepository) : ViewModelProvider.Factory {
+class RecordsViewModelProvider(private val repo: TransactionRepository, private val financeRepository: FinanceRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return RecordsViewModel(repo) as T
+        return RecordsViewModel(repo, financeRepository) as T
     }
 }

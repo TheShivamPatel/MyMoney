@@ -14,12 +14,12 @@
         android:gravity="center" />
 
     <TextView
+        android:id="@+id/allAccountsBalanceTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/size_16"
         android:fontFamily="@font/montserrat_medium"
-        android:text="[ All Accounts ₹70,000 ]"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_16" />
 

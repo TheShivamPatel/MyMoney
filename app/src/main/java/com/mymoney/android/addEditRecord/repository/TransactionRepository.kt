@@ -16,14 +16,6 @@ class TransactionRepository(private val transactionDao: TransactionDao) {
 
     fun getTotalByCategory(type: String) = transactionDao.getTotalByCategory(type)
 
-    fun getTotalIncome(): LiveData<Double?> {
-        return transactionDao.getTotalIncome()
-    }
-
-    fun getTotalExpense(): LiveData<Double?> {
-        return transactionDao.getTotalExpense()
-    }
-
     suspend fun insertTransaction(transaction: Transaction) {
         withContext(Dispatchers.IO) {
             transactionDao.insertTransaction(transaction)

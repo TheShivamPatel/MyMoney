@@ -21,12 +21,11 @@ interface TransactionDao {
     @Query("SELECT * FROM mymoney_transactions_table")
     fun getAllTransactions(): LiveData<List<Transaction>>
 
+    @Query("SELECT SUM(amount) FROM mymoney_transactions_table WHERE type = :type")
+    fun getTotalByType(type: String): LiveData<Double?>
 
-    @Query("SELECT SUM(amount) FROM mymoney_transactions_table WHERE type = 'income'")
-    fun getTotalIncome(): LiveData<Double?>
-
-    @Query("SELECT SUM(amount) FROM mymoney_transactions_table WHERE type = 'expense'")
-    fun getTotalExpense(): LiveData<Double?>
+    @Query("SELECT (SELECT COALESCE(SUM(amount), 0) FROM mymoney_transactions_table WHERE type = :incomeType) - (SELECT COALESCE(SUM(amount), 0) FROM mymoney_transactions_table WHERE type = :expenseType)")
+    fun getTotalBalance(incomeType: String, expenseType: String): LiveData<Double?>
 
     @Query(
         """
