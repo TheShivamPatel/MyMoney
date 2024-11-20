@@ -42,6 +42,18 @@ data class TransactionWithDetails(
     val note: String?
 )
 
+data class CategoryExpenseSummary(
+    val categoryName: String,
+    val totalAmount: Double,
+    val categoryIcon: String?
+)
+
+data class CategoryExpensePercentage(
+    val categoryName: String,
+    val totalAmount: Double,
+    val percentage: Double,
+    val categoryIcon: String?
+)
 
 //foreignKeys = [
 //ForeignKey(

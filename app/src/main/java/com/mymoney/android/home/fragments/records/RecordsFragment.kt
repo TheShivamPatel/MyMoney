@@ -38,7 +38,7 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentRecordsBinding.inflate(inflater, container, false)
         return binding.root
     }

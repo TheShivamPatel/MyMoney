@@ -3,6 +3,7 @@ package com.mymoney.android.roomDB.daos
 import androidx.lifecycle.LiveData
 import com.mymoney.android.roomDB.data.Transaction
 import androidx.room.*
+import com.mymoney.android.roomDB.data.CategoryExpenseSummary
 import com.mymoney.android.roomDB.data.TransactionWithDetails
 
 @Dao
@@ -20,17 +21,12 @@ interface TransactionDao {
     @Query("SELECT * FROM mymoney_transactions_table")
     fun getAllTransactions(): LiveData<List<Transaction>>
 
-    @Query("SELECT * FROM mymoney_transactions_table WHERE account_id = :accountId")
-    fun getTransactionsByAccountId(accountId: Int): LiveData<List<Transaction>>
 
-    @Query("SELECT * FROM mymoney_transactions_table WHERE category_id = :categoryId")
-    fun getTransactionsByCategoryId(categoryId: Int): LiveData<List<Transaction>>
+    @Query("SELECT SUM(amount) FROM mymoney_transactions_table WHERE type = 'income'")
+    fun getTotalIncome(): LiveData<Double?>
 
-    @Query("SELECT * FROM mymoney_transactions_table WHERE from_account_id = :fromAccountId AND to_account_id = :toAccountId")
-    fun getTransactionsByAccountTransfer(
-        fromAccountId: Int,
-        toAccountId: Int
-    ): LiveData<List<Transaction>>
+    @Query("SELECT SUM(amount) FROM mymoney_transactions_table WHERE type = 'expense'")
+    fun getTotalExpense(): LiveData<Double?>
 
     @Query(
         """
@@ -57,6 +53,7 @@ interface TransactionDao {
     )
     fun getAllTransactionsWithDetails(): LiveData<List<TransactionWithDetails>>
 
+
     @Query(
         """
         SELECT 
@@ -77,17 +74,26 @@ interface TransactionDao {
         LEFT JOIN mymoney_account_table AS a ON t.account_id = a.id
         LEFT JOIN mymoney_account_table AS fa ON t.from_account_id = fa.id
         LEFT JOIN mymoney_account_table AS ta ON t.to_account_id = ta.id
-        WHERE (:types IS NULL OR t.type IN (:types))
+        WHERE t.type = :type
         ORDER BY t.date DESC, t.time DESC
     """
     )
-    fun getFilteredTransactionsWithDetails(
-        types: List<String>?
-    ): LiveData<List<TransactionWithDetails>>
+    fun getAllTransactionsByTypeWithDetails(type: String): LiveData<List<TransactionWithDetails>>
 
-    @Query("SELECT SUM(amount) FROM mymoney_transactions_table WHERE type = 'income'")
-    fun getTotalIncome(): LiveData<Double?>
+    @Query(
+        """
+    SELECT 
+        c.name AS categoryName,
+        c.icon AS categoryIcon,
+        SUM(t.amount) AS totalAmount
+    FROM mymoney_transactions_table AS t
+    LEFT JOIN mymoney_category_table AS c ON t.category_id = c.id
+    WHERE t.type = :type
+    GROUP BY c.name, c.icon
+    ORDER BY totalAmount DESC
+    """
+    )
+    fun getTotalByCategory(type: String): LiveData<List<CategoryExpenseSummary>>
 
-    @Query("SELECT SUM(amount) FROM mymoney_transactions_table WHERE type = 'expense'")
-    fun getTotalExpense(): LiveData<Double?>
+
 }

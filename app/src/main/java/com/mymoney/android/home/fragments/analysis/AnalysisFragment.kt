@@ -16,6 +16,7 @@ import com.mymoney.android.home.fragments.records.adapter.RecordsAdapter
 import com.mymoney.android.home.fragments.records.viewModel.RecordsViewModel
 import com.mymoney.android.home.fragments.records.viewModel.RecordsViewModelProvider
 import com.mymoney.android.roomDB.daos.TransactionDao
+import com.mymoney.android.roomDB.data.CategoryExpensePercentage
 import com.mymoney.android.roomDB.database.MyMoneyDatabase
 
 class AnalysisFragment : Fragment(R.layout.fragment_analysis) {
@@ -56,8 +57,20 @@ class AnalysisFragment : Fragment(R.layout.fragment_analysis) {
 
     private fun setUpRecyclerView() {
         binding.recordsOverviewRv.layoutManager = LinearLayoutManager(context)
-        viewModel.allRecordsWithDetails.observe(viewLifecycleOwner, Observer { records ->
-            adapter = context?.let { RecordsAnalysisAdapter(records) }
+        viewModel.allTotalExpensesByCategory.observe(viewLifecycleOwner, Observer { categoryExpenses ->
+            val totalExpense = categoryExpenses.sumByDouble { it.totalAmount }
+            val categoryPercentageList = categoryExpenses.map {
+                val percentage = (it.totalAmount / totalExpense) * 100
+                val formattedPercentage = String.format("%.2f", percentage).toDouble()
+                CategoryExpensePercentage(
+                    categoryName = it.categoryName,
+                    totalAmount = it.totalAmount,
+                    percentage = formattedPercentage,
+                    categoryIcon = it.categoryIcon
+                )
+            }.sortedByDescending { it.percentage }
+
+            adapter = context?.let { RecordsAnalysisAdapter(categoryPercentageList, context!!) }
             binding.recordsOverviewRv.adapter = adapter
         })
     }
