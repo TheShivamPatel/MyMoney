@@ -79,7 +79,9 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
     private fun setUpOnClick() {
         binding.filterLl.setOnClickListener {
             activity?.supportFragmentManager?.let { it1 ->
-                RecordFilterBottomSheet().show(
+                RecordFilterBottomSheet(positiveCallBack = {
+                    Log.d("zzz", "Filter kar de bhai")
+                }).show(
                     it1,
                     "RecordFilterBottomSheet"
                 )

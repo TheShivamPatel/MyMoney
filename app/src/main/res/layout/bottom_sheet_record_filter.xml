@@ -5,52 +5,85 @@
     android:background="@color/white"
     android:orientation="vertical">
 
+    <View
+        android:id="@+id/view7"
+        android:layout_width="@dimen/size_40"
+        android:layout_height="@dimen/size_6"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/size_8"
+        android:background="@drawable/grey_rounded_background" />
+
     <TextView
-        style="@style/headlineMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/size_16"
-        android:text="Filter you records" />
+        style="@style/headlineLarge"
+        android:text="Filter you records"
+        android:layout_marginHorizontal="@dimen/size_24"
+        android:layout_marginVertical="@dimen/size_16"/>
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chips_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/size_22">
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/option_1"
-            style="@style/Widget.MaterialComponents.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/size_8"
-            android:checked="true"
-            android:text="Income" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/option_2"
-            style="@style/Widget.MaterialComponents.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/size_8"
-            android:checked="true"
-            android:text="Expense" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/option_3"
-            style="@style/Widget.MaterialComponents.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/size_8"
-            android:checked="true"
-            android:text="Transfer" />
-
-    </com.google.android.material.chip.ChipGroup>
-
-    <Space
+    <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/size_100" />
+        android:layout_height="@dimen/size_1"
+        android:background="@color/grey_200"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/parentFilterRv"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_weight="2"
+            android:layout_marginTop="@dimen/size_16"/>
+
+        <View
+            android:layout_width="@dimen/size_1"
+            android:layout_height="match_parent"
+            android:background="@color/grey_200" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/childFilterRv"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginStart="@dimen/size_16"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/size_16"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_1"
+        android:background="@color/grey_200"/>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_16"
+        android:layout_marginTop="@dimen/size_24"
+        android:layout_marginEnd="@dimen/size_16"
+        android:layout_marginBottom="@dimen/size_24"
+        android:gravity="center_vertical">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_negative"
+            style="@style/secondaryButtonStyle"
+            android:layout_width="0dp"
+            android:layout_marginEnd="@dimen/size_6"
+            android:layout_weight="1"
+            android:text="Reset" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_positive"
+            style="@style/primaryButtonStyle"
+            android:layout_width="0dp"
+            android:layout_marginStart="@dimen/size_6"
+            android:layout_weight="1"
+            android:text="@string/apply" />
+
+    </LinearLayout>
 
 </LinearLayout>
