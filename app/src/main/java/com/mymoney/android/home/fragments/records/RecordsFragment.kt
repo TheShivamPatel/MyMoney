@@ -19,8 +19,16 @@ import com.mymoney.android.home.fragments.records.viewModel.RecordsViewModel
 import com.mymoney.android.home.fragments.records.viewModel.RecordsViewModelProvider
 import com.mymoney.android.home.repository.FinanceRepository
 import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.RecordFilterBottomSheet
+import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.data.FilterTimePeriod
 import com.mymoney.android.roomDB.daos.TransactionDao
 import com.mymoney.android.roomDB.database.MyMoneyDatabase
+import com.mymoney.android.viewUtils.ViewUtils.parseDate
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class RecordsFragment : Fragment(R.layout.fragment_records) {
 
@@ -61,9 +69,10 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
             this,
             RecordsViewModelProvider(repository, financeRepository)
         )[RecordsViewModel::class.java]
-        setUpRecyclerView()
+        setUpViewMode()
         setUpOnClick()
         setUpAccountSummary()
+        setUpRecyclerView()
     }
 
     private fun setUpAccountSummary() {
@@ -77,7 +86,7 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
     }
 
     private fun setUpOnClick() {
-        binding.filterLl.setOnClickListener {
+        binding.filterImg.setOnClickListener {
             activity?.supportFragmentManager?.let { it1 ->
                 RecordFilterBottomSheet(positiveCallBack = {
                     viewModel.applyFilters()
@@ -87,6 +96,16 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
                 )
             }
         }
+    }
+
+    private fun setUpViewMode() {
+
+        binding.nextImgBtn.setOnClickListener { viewModel.nextDateWeekMonth() }
+        binding.backImgBtn.setOnClickListener { viewModel.previousDateWeekMonth() }
+
+        viewModel.viewMode.observe(viewLifecycleOwner, Observer {
+            binding.currentViewModelTv.text = it
+        })
     }
 
     private fun setUpRecyclerView() {

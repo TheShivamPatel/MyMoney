@@ -32,6 +32,9 @@ class RecordsAdapter(private val recordsList: List<TransactionWithDetails>, priv
                 }
                 TransactionType.INCOME.name -> {
                     binding.tvTrailing.text = "₹${record.amount}"
+                    binding.tvTrailing.setTextColor(
+                        ContextCompat.getColor(binding.root.context, R.color.green_500)
+                    )
                 }
                 else -> {
                     binding.tvTrailing.text = "₹${record.amount}"

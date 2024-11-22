@@ -17,11 +17,25 @@ import android.widget.Toast
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.piikeup.consumer.home.activity.TabItem
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneId
 import java.util.Arrays
+import java.util.Locale
 import kotlin.math.roundToInt
 
 
 object ViewUtils {
+
+    fun parseDate(dateString: String?): LocalDate? {
+        return try {
+            val dateFormat = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
+            val date = dateFormat.parse(dateString)
+            date?.toInstant()?.atZone(ZoneId.systemDefault())?.toLocalDate()
+        } catch (e: Exception) {
+            null
+        }
+    }
 
     fun showToast(context: Context, message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()

@@ -47,7 +47,6 @@ interface TransactionDao {
         LEFT JOIN mymoney_account_table AS a ON t.account_id = a.id
         LEFT JOIN mymoney_account_table AS fa ON t.from_account_id = fa.id
         LEFT JOIN mymoney_account_table AS ta ON t.to_account_id = ta.id
-        ORDER BY t.date DESC, t.time DESC
     """
     )
     fun getAllTransactionsWithDetails(): LiveData<List<TransactionWithDetails>>

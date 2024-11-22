@@ -70,5 +70,4 @@ class RecordFilterBottomSheet( private val positiveCallBack: ()-> Unit) : Bottom
         binding.childFilterRv.layoutManager = LinearLayoutManager(context)
         binding.childFilterRv.adapter = childFilterAdapter
     }
-
 }
