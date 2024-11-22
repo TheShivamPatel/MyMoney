@@ -1,6 +1,5 @@
 package com.mymoney.android.addEditRecord.repository
 
-import androidx.lifecycle.LiveData
 import com.mymoney.android.roomDB.daos.TransactionDao
 import com.mymoney.android.roomDB.data.Transaction
 import kotlinx.coroutines.Dispatchers
@@ -11,8 +10,6 @@ class TransactionRepository(private val transactionDao: TransactionDao) {
     fun getAllTransactions() = transactionDao.getAllTransactions()
 
     fun getAllTransactionsWithDetails() = transactionDao.getAllTransactionsWithDetails()
-
-    fun getAllTransactionsByTypeWithDetails(type: String) = transactionDao.getAllTransactionsByTypeWithDetails(type)
 
     fun getTotalByCategory(type: String) = transactionDao.getTotalByCategory(type)
 

@@ -80,7 +80,7 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
         binding.filterLl.setOnClickListener {
             activity?.supportFragmentManager?.let { it1 ->
                 RecordFilterBottomSheet(positiveCallBack = {
-                    Log.d("zzz", "Filter kar de bhai")
+                    viewModel.applyFilters()
                 }).show(
                     it1,
                     "RecordFilterBottomSheet"
@@ -91,10 +91,9 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
 
     private fun setUpRecyclerView() {
         binding.recordsRv.layoutManager = LinearLayoutManager(context)
-        viewModel.allRecordsWithDetails.observe(viewLifecycleOwner, Observer { records ->
+        viewModel.allRecords.observe(viewLifecycleOwner, Observer { records ->
             recordsAdapter = context?.let { RecordsAdapter(records, it) }
             binding.recordsRv.adapter = recordsAdapter
         })
     }
-
 }

@@ -55,32 +55,6 @@ interface TransactionDao {
 
     @Query(
         """
-        SELECT 
-            t.id AS transactionId, 
-            t.date, 
-            t.time, 
-            t.amount, 
-            t.type, 
-            c.name AS categoryName, 
-            c.icon AS categoryIcon, 
-            c.type AS categoryType, 
-            a.name AS accountName, 
-            fa.name AS fromAccountName, 
-            ta.name AS toAccountName, 
-            t.note
-        FROM mymoney_transactions_table AS t
-        LEFT JOIN mymoney_category_table AS c ON t.category_id = c.id
-        LEFT JOIN mymoney_account_table AS a ON t.account_id = a.id
-        LEFT JOIN mymoney_account_table AS fa ON t.from_account_id = fa.id
-        LEFT JOIN mymoney_account_table AS ta ON t.to_account_id = ta.id
-        WHERE t.type = :type
-        ORDER BY t.date DESC, t.time DESC
-    """
-    )
-    fun getAllTransactionsByTypeWithDetails(type: String): LiveData<List<TransactionWithDetails>>
-
-    @Query(
-        """
     SELECT 
         c.name AS categoryName,
         c.icon AS categoryIcon,
