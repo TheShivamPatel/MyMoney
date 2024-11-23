@@ -51,21 +51,4 @@ interface TransactionDao {
     )
     fun getAllTransactionsWithDetails(): LiveData<List<TransactionWithDetails>>
 
-
-    @Query(
-        """
-    SELECT 
-        c.name AS categoryName,
-        c.icon AS categoryIcon,
-        SUM(t.amount) AS totalAmount
-    FROM mymoney_transactions_table AS t
-    LEFT JOIN mymoney_category_table AS c ON t.category_id = c.id
-    WHERE t.type = :type
-    GROUP BY c.name, c.icon
-    ORDER BY totalAmount DESC
-    """
-    )
-    fun getTotalByCategory(type: String): LiveData<List<CategoryExpenseSummary>>
-
-
 }

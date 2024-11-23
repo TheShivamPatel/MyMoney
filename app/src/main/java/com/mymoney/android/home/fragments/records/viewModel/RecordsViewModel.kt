@@ -1,5 +1,6 @@
 package com.mymoney.android.home.fragments.records.viewModel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,6 +10,7 @@ import com.mymoney.android.home.repository.FinanceRepository
 import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.data.AvailableFilters
 import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.data.FilterTimePeriod
 import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.model.FilterType
+import com.mymoney.android.roomDB.data.CategoryExpensePercentage
 import com.mymoney.android.roomDB.data.CategoryExpenseSummary
 import com.mymoney.android.roomDB.data.TransactionType
 import com.mymoney.android.roomDB.data.TransactionWithDetails
@@ -28,22 +30,20 @@ class RecordsViewModel(
     private val financeRepository: FinanceRepository
 ) : ViewModel() {
 
-    val allTotalExpensesByCategory: LiveData<List<CategoryExpenseSummary>> =
-        repo.getTotalByCategory(TransactionType.EXPENSE.name)
+    val totalIncome: LiveData<Double?> = financeRepository.getTotalIncome(TransactionType.INCOME.name)
 
-    val totalIncome: LiveData<Double?> =
-        financeRepository.getTotalIncome(TransactionType.INCOME.name)
-
-    val totalExpense: LiveData<Double?> =
-        financeRepository.getTotalExpense(TransactionType.EXPENSE.name)
+    val totalExpense: LiveData<Double?> = financeRepository.getTotalExpense(TransactionType.EXPENSE.name)
 
     private val filterList = AvailableFilters.getAvailableFilters()
+
 
     val allRecords = MutableLiveData<List<TransactionWithDetails>>()
     private val _unfilteredRecords = mutableListOf<TransactionWithDetails>()
     val unfilteredRecords: List<TransactionWithDetails> get() = _unfilteredRecords
 
-    var viewMode = MutableLiveData<String>()
+
+    private val _viewMode = MutableLiveData<String>()
+    val viewMode : LiveData<String> get() = _viewMode
 
     private var selectedCategories = emptyList<String>()
 
@@ -78,6 +78,7 @@ class RecordsViewModel(
             }
         }
     }
+
 
     private fun applyFilters() {
         selectedCategories = filterList.getSubFilterNamesByType()
@@ -179,8 +180,9 @@ class RecordsViewModel(
             FilterTimePeriod.YEAR.name -> currentYear.toString()
             else -> ""
         }
-        viewMode.postValue(mode)
+        _viewMode.postValue(mode)
         applyFilters()
+        getExpenseAnalysisList()
     }
 
     fun previousDateWeekMonth() {
@@ -207,8 +209,9 @@ class RecordsViewModel(
             }
             else -> ""
         }
-        viewMode.postValue(mode)
+        _viewMode.postValue(mode)
         applyFilters()
+        getExpenseAnalysisList()
     }
 
     fun nextDateWeekMonth() {
@@ -235,8 +238,9 @@ class RecordsViewModel(
             }
             else -> ""
         }
-        viewMode.postValue(mode)
+        _viewMode.postValue(mode)
         applyFilters()
+        getExpenseAnalysisList()
     }
 
     private fun adjustMonth(step: Int) {
@@ -248,6 +252,46 @@ class RecordsViewModel(
             currentMonth = 12
             currentYear -= 1
         }
+    }
+
+
+    val filteredAllTotalExpensesByCategory = MutableLiveData<List<CategoryExpensePercentage>>()
+
+    private fun getExpenseAnalysisList() {
+        Log.d("zzz", "getExpenseAnalysisList")
+
+        val selectedViewMode = filterList.getSelectedViewMode()
+
+        var filteredList = unfilteredRecords
+
+        filteredList = filteredList.filter { it.type in TransactionType.EXPENSE.name }
+
+        filteredList = when (selectedViewMode) {
+            FilterTimePeriod.DAILY.name -> filterByDay(filteredList)
+            FilterTimePeriod.WEEKLY.name -> filterByWeek(filteredList)
+            FilterTimePeriod.MONTHLY.name -> filterByMonth(filteredList)
+            FilterTimePeriod.YEAR.name -> filterByYear(filteredList)
+            else -> filterByMonth(filteredList)
+        }
+
+        val categoryTotals = filteredList.groupBy { it.categoryName }.mapValues { entry ->
+            entry.value.sumOf { it.amount }
+        }
+
+        val totalExpense = categoryTotals.values.sum()
+
+        val categoryPercentageList = categoryTotals.map { (categoryName, totalAmount) ->
+            val percentage = if (totalExpense > 0) (totalAmount / totalExpense) * 100 else 0.0
+            val formattedPercentage = String.format("%.2f", percentage).toDouble()
+            CategoryExpensePercentage(
+                categoryName = categoryName ?: "Unknown",
+                totalAmount = totalAmount,
+                percentage = formattedPercentage,
+                categoryIcon = filteredList.firstOrNull { it.categoryName == categoryName }?.categoryIcon
+            )
+        }.sortedByDescending { it.percentage }
+
+        filteredAllTotalExpensesByCategory.postValue(categoryPercentageList)
     }
 
 }

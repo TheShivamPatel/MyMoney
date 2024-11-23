@@ -57,7 +57,7 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
         financeRepository = FinanceRepository(transactionDao)
         repository = TransactionRepository(transactionDao)
         viewModel = ViewModelProvider(
-            this,
+            requireActivity(),
             RecordsViewModelProvider(repository, financeRepository)
         )[RecordsViewModel::class.java]
         setUpViewMode()

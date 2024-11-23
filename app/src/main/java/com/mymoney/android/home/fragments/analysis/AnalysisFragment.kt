@@ -22,6 +22,7 @@ import com.mymoney.android.home.fragments.records.adapter.RecordsAdapter
 import com.mymoney.android.home.fragments.records.viewModel.RecordsViewModel
 import com.mymoney.android.home.fragments.records.viewModel.RecordsViewModelProvider
 import com.mymoney.android.home.repository.FinanceRepository
+import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.RecordFilterBottomSheet
 import com.mymoney.android.roomDB.daos.TransactionDao
 import com.mymoney.android.roomDB.data.CategoryExpensePercentage
 import com.mymoney.android.roomDB.database.MyMoneyDatabase
@@ -57,12 +58,24 @@ class AnalysisFragment : Fragment(R.layout.fragment_analysis) {
         }
         financeRepository = FinanceRepository(transactionDao)
         repository = TransactionRepository(transactionDao)
-        viewModel = ViewModelProvider(
-            this,
-            RecordsViewModelProvider(repository, financeRepository)
-        )[RecordsViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity(), RecordsViewModelProvider(repository, financeRepository))[RecordsViewModel::class.java]
         setUpRecyclerView()
         setUpAccountSummary()
+        setUpViewMode()
+        setUpOnClick()
+    }
+
+    private fun setUpOnClick() {
+        binding.filterImg.setOnClickListener {
+            activity?.supportFragmentManager?.let { it1 ->
+                RecordFilterBottomSheet(positiveCallBack = {
+                    viewModel.setFilterTimePeriod()
+                }).show(
+                    it1,
+                    "RecordFilterBottomSheet"
+                )
+            }
+        }
     }
 
     private fun setUpAccountSummary() {
@@ -76,27 +89,24 @@ class AnalysisFragment : Fragment(R.layout.fragment_analysis) {
         binding.accountSummary.setThirdSectionData("BALANCE", 10000.0)
     }
 
+    private fun setUpViewMode() {
+
+        binding.nextImgBtn.setOnClickListener { viewModel.nextDateWeekMonth() }
+        binding.backImgBtn.setOnClickListener { viewModel.previousDateWeekMonth() }
+
+        viewModel.viewMode.observe(viewLifecycleOwner, Observer {
+            binding.currentViewModelTv.text = it
+        })
+    }
 
     private fun setUpRecyclerView() {
         binding.recordsOverviewRv.layoutManager = LinearLayoutManager(context)
-        viewModel.allTotalExpensesByCategory.observe(viewLifecycleOwner, Observer { categoryExpenses ->
-            val totalExpense = categoryExpenses.sumByDouble { it.totalAmount }
-            val categoryPercentageList = categoryExpenses.map {
-                val percentage = (it.totalAmount / totalExpense) * 100
-                val formattedPercentage = String.format("%.2f", percentage).toDouble()
-                CategoryExpensePercentage(
-                    categoryName = it.categoryName,
-                    totalAmount = it.totalAmount,
-                    percentage = formattedPercentage,
-                    categoryIcon = it.categoryIcon
-                )
-            }.sortedByDescending { it.percentage }
 
+        viewModel.filteredAllTotalExpensesByCategory.observe(viewLifecycleOwner, Observer {categoryPercentageList->
             adapter = context?.let { RecordsAnalysisAdapter(categoryPercentageList, requireContext()) }
             binding.recordsOverviewRv.adapter = adapter
 
             setUpPieChart(categoryPercentageList)
-
         })
     }
 
@@ -116,11 +126,10 @@ class AnalysisFragment : Fragment(R.layout.fragment_analysis) {
         binding.analysisPieChart.apply{
             this.data = data
             description.isEnabled = false
-            animateY(2000)
+            animateY(1000)
             holeRadius = 40f
             setDrawEntryLabels(false)
             isRotationEnabled = false
-
 
             legend.isEnabled = true
             legend.verticalAlignment = Legend.LegendVerticalAlignment.CENTER
