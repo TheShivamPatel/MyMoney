@@ -35,7 +35,7 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildFeatures{
+    buildFeatures {
         viewBinding = true
         buildConfig = true
     }
@@ -63,5 +63,8 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
 
     implementation("androidx.multidex:multidex:2.0.1")
+
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
 
 }

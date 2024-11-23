@@ -5,7 +5,6 @@ import com.mymoney.android.home.fragments.account.AccountsFragment
 import com.mymoney.android.home.fragments.analysis.AnalysisFragment
 import com.mymoney.android.home.fragments.category.CategoryFragment
 import com.mymoney.android.home.fragments.records.RecordsFragment
-import com.piikeup.consumer.home.activity.TabItem
 
 object HomePageEvaluator {
     private const val PAGE_TYPE_RECORDS = "Records"

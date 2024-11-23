@@ -2,7 +2,6 @@ package com.mymoney.android.home.fragments.records
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -19,16 +18,8 @@ import com.mymoney.android.home.fragments.records.viewModel.RecordsViewModel
 import com.mymoney.android.home.fragments.records.viewModel.RecordsViewModelProvider
 import com.mymoney.android.home.repository.FinanceRepository
 import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.RecordFilterBottomSheet
-import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.data.FilterTimePeriod
 import com.mymoney.android.roomDB.daos.TransactionDao
 import com.mymoney.android.roomDB.database.MyMoneyDatabase
-import com.mymoney.android.viewUtils.ViewUtils.parseDate
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 
 class RecordsFragment : Fragment(R.layout.fragment_records) {
 
@@ -115,4 +106,5 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
             binding.recordsRv.adapter = recordsAdapter
         })
     }
+
 }

@@ -1,4 +1,4 @@
-package com.piikeup.consumer.home.activity
+package com.mymoney.android.home.activity
 
 import android.graphics.drawable.Drawable
 

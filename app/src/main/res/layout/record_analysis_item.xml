@@ -10,7 +10,7 @@
         android:layout_height="@dimen/size_50"
         android:layout_marginStart="@dimen/size_2"
         android:layout_marginTop="@dimen/size_10"
-        android:padding="@dimen/size_6"
+        android:padding="@dimen/size_10"
         android:src="@drawable/ic_launcher_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

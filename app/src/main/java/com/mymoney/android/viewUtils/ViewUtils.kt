@@ -3,11 +3,7 @@ package com.mymoney.android.viewUtils
 import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
-import android.graphics.Paint
-import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
-import android.text.TextPaint
-import android.text.TextUtils
 import android.util.Log
 import android.view.Menu
 import android.view.View
@@ -16,12 +12,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.piikeup.consumer.home.activity.TabItem
+import com.mymoney.android.home.activity.TabItem
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Arrays
 import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt

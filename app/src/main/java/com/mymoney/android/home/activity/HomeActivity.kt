@@ -10,7 +10,6 @@ import com.mymoney.android.databinding.ActivityHomeScreenBinding
 import com.mymoney.android.roomDB.database.MyMoneyDatabase
 import com.mymoney.android.viewUtils.ViewUtils
 import com.mymoney.android.viewUtils.setBottomNavWithViewPager
-import com.piikeup.consumer.home.activity.TabItem
 import com.piikeup.consumer.home.activity.adapter.HomePageAdapter
 
 class HomeActivity : AppCompatActivity() {
