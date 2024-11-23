@@ -20,7 +20,9 @@ import com.piikeup.consumer.home.activity.TabItem
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Arrays
+import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt
 
@@ -36,6 +38,43 @@ object ViewUtils {
             null
         }
     }
+
+    fun getFormattedDate(date: LocalDate): String {
+        val formatter = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
+        return formatter.format(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()))
+    }
+
+    fun formatWeekRange(startOfWeek: LocalDate, endOfWeek: LocalDate): String {
+        val formatter = DateTimeFormatter.ofPattern("MMM dd", Locale.getDefault())
+        val startFormatted = startOfWeek.format(formatter)
+        val endFormatted = endOfWeek.format(formatter)
+        return "$startFormatted - $endFormatted"
+    }
+
+    fun getMonthFromDateString(date: String?): Int {
+        return try {
+            val parsedDate = parseDate(date)
+            parsedDate?.monthValue ?: -1
+        } catch (e: Exception) {
+            -1
+        }
+    }
+
+    fun getYearFromDateString(date: String?): Int {
+        return try {
+            val parsedDate = parseDate(date)
+            parsedDate?.year ?: -1
+        } catch (e: Exception) {
+            -1
+        }
+    }
+
+    fun getMonthAndYear(year: Int, month: Int): String {
+        val monthName = LocalDate.of(year, month, 1).month.name
+        return "$monthName, $year"
+    }
+
+
 
     fun showToast(context: Context, message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()

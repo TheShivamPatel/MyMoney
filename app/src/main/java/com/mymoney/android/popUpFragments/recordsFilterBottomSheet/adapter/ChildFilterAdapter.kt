@@ -72,10 +72,11 @@ class ChildFilterAdapter(
             binding.root.setOnClickListener {
                 childFilter.isSelected = !childFilter.isSelected
                 itemClickListener.onCheckboxSelectionChanged(childFilter)
-                notifyItemChanged(position)
+                notifyItemChanged(adapterPosition)
             }
         }
     }
+
 
     override fun getItemViewType(position: Int): Int {
         return when (filterType.selectionType) {

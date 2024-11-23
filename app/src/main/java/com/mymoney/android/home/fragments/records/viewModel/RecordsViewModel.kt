@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import com.mymoney.android.addEditRecord.repository.TransactionRepository
 import com.mymoney.android.home.repository.FinanceRepository
 import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.data.AvailableFilters
@@ -13,24 +12,30 @@ import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.model.FilterT
 import com.mymoney.android.roomDB.data.CategoryExpenseSummary
 import com.mymoney.android.roomDB.data.TransactionType
 import com.mymoney.android.roomDB.data.TransactionWithDetails
+import com.mymoney.android.viewUtils.ViewUtils.formatWeekRange
+import com.mymoney.android.viewUtils.ViewUtils.getFormattedDate
+import com.mymoney.android.viewUtils.ViewUtils.getMonthAndYear
+import com.mymoney.android.viewUtils.ViewUtils.getMonthFromDateString
+import com.mymoney.android.viewUtils.ViewUtils.getYearFromDateString
 import com.mymoney.android.viewUtils.ViewUtils.parseDate
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoField
-import java.util.Date
 import java.util.Locale
 
-class RecordsViewModel(private val repo: TransactionRepository, private val financeRepository: FinanceRepository) : ViewModel() {
+class RecordsViewModel(
+    private val repo: TransactionRepository,
+    private val financeRepository: FinanceRepository
+) : ViewModel() {
 
-    val allTotalExpensesByCategory : LiveData<List<CategoryExpenseSummary>> = repo.getTotalByCategory(TransactionType.EXPENSE.name)
+    val allTotalExpensesByCategory: LiveData<List<CategoryExpenseSummary>> =
+        repo.getTotalByCategory(TransactionType.EXPENSE.name)
 
-    val totalIncome: LiveData<Double?> = financeRepository.getTotalIncome(TransactionType.INCOME.name)
+    val totalIncome: LiveData<Double?> =
+        financeRepository.getTotalIncome(TransactionType.INCOME.name)
 
-    val totalExpense: LiveData<Double?> = financeRepository.getTotalExpense(TransactionType.EXPENSE.name)
+    val totalExpense: LiveData<Double?> =
+        financeRepository.getTotalExpense(TransactionType.EXPENSE.name)
 
     private val filterList = AvailableFilters.getAvailableFilters()
 
@@ -38,14 +43,14 @@ class RecordsViewModel(private val repo: TransactionRepository, private val fina
     private val _unfilteredRecords = mutableListOf<TransactionWithDetails>()
     val unfilteredRecords: List<TransactionWithDetails> get() = _unfilteredRecords
 
+    var viewMode = MutableLiveData<String>()
+
     private var selectedCategories = emptyList<String>()
-    var viewMode = MutableLiveData<String>("Dec, 2024")
 
     private var currentDate = LocalDate.now()
-    private var currentMonth = LocalDate.now().monthValue
-    private var currentWeekOfYear = LocalDate.now().get(ChronoField.ALIGNED_WEEK_OF_YEAR)
-    private var currentYear = LocalDate.now().year
-
+    private var currentMonth = currentDate.monthValue
+    private var currentYear = currentDate.year
+    private var lastSelectedViewMode: String = FilterTimePeriod.DAILY.name
 
     init {
         observeRecords()
@@ -54,7 +59,8 @@ class RecordsViewModel(private val repo: TransactionRepository, private val fina
     private fun observeRecords() {
         repo.getAllTransactionsWithDetails().observeForever { response ->
             response?.let {
-                val dateTimeFormatter = SimpleDateFormat("dd MMM, yyyy hh:mm a", Locale.getDefault())
+                val dateTimeFormatter =
+                    SimpleDateFormat("dd MMM, yyyy hh:mm a", Locale.getDefault())
 
                 val sortedList = it.sortedByDescending { transaction ->
                     val dateTimeString = "${transaction.date} ${transaction.time}"
@@ -68,14 +74,13 @@ class RecordsViewModel(private val repo: TransactionRepository, private val fina
                 _unfilteredRecords.clear()
                 _unfilteredRecords.addAll(sortedList)
                 allRecords.postValue(sortedList)
-                applyFilters()
+                setFilterTimePeriod()
             }
         }
     }
 
-
-    fun applyFilters() {
-        selectedCategories = filterList.getSubFilterNamesByType(1)
+    private fun applyFilters() {
+        selectedCategories = filterList.getSubFilterNamesByType()
         val selectedViewMode = filterList.getSelectedViewMode()
 
         var filteredList = unfilteredRecords
@@ -88,10 +93,19 @@ class RecordsViewModel(private val repo: TransactionRepository, private val fina
             FilterTimePeriod.DAILY.name -> filterByDay(filteredList)
             FilterTimePeriod.WEEKLY.name -> filterByWeek(filteredList)
             FilterTimePeriod.MONTHLY.name -> filterByMonth(filteredList)
+            FilterTimePeriod.YEAR.name -> filterByYear(filteredList)
             else -> filterByMonth(filteredList)
         }
 
         allRecords.postValue(filteredList)
+    }
+
+    private fun List<FilterType>.getSubFilterNamesByType(): List<String> {
+        return this.firstOrNull { it.id == 1 }
+            ?.subFilters
+            ?.filter { it.isSelected }
+            ?.map { it.name }
+            ?: listOf()
     }
 
     private fun List<FilterType>.getSelectedViewMode(): String {
@@ -116,110 +130,132 @@ class RecordsViewModel(private val repo: TransactionRepository, private val fina
     }
 
     private fun filterByMonth(records: List<TransactionWithDetails>): List<TransactionWithDetails> {
-        return records.filter { getMonth(it.date) == currentMonth && getYear(it.date) == currentYear }
-    }
-
-    private fun getMonth(date: String?): Int {
-        return try {
-            val parsedDate = parseDate(date)
-            parsedDate?.monthValue ?: -1
-        } catch (e: Exception) {
-            -1
+        return records.filter {
+            getMonthFromDateString(it.date) == currentMonth && getYearFromDateString(
+                it.date
+            ) == currentYear
         }
     }
 
-    private fun getYear(date: String?): Int {
-        return try {
-            val parsedDate = parseDate(date)
-            parsedDate?.year ?: -1
-        } catch (e: Exception) {
-            -1
+    private fun filterByYear(records: List<TransactionWithDetails>): List<TransactionWithDetails> {
+        return records.filter { getYearFromDateString(it.date) == currentYear }
+    }
+
+
+    private fun updateCurrentDateForViewMode(selectedViewMode: String) {
+        when (lastSelectedViewMode) {
+            FilterTimePeriod.DAILY.name -> {
+                currentMonth = currentDate.monthValue
+                currentYear = currentDate.year
+            }
+            FilterTimePeriod.WEEKLY.name -> {
+                currentDate = currentDate.with(DayOfWeek.MONDAY)
+                currentMonth = currentDate.monthValue
+                currentYear = currentDate.year
+            }
+            FilterTimePeriod.MONTHLY.name -> {
+                currentDate = LocalDate.of(currentYear, currentMonth, 1)
+            }
+            FilterTimePeriod.YEAR.name -> {
+                currentDate = LocalDate.of(currentYear, 1, 1)
+                currentMonth = 1
+            }
         }
+        lastSelectedViewMode = selectedViewMode
     }
 
-    private fun List<FilterType>.getSubFilterNamesByType(type: Int): List<String> {
-        return this.firstOrNull { it.id == type }
-            ?.subFilters
-            ?.filter { it.isSelected }
-            ?.map { it.name }
-            ?: listOf()
-    }
+    fun setFilterTimePeriod() {
+        val selectedViewMode = filterList.getSelectedViewMode()
 
+        updateCurrentDateForViewMode(selectedViewMode)
+
+        val mode = when (selectedViewMode) {
+            FilterTimePeriod.DAILY.name -> getFormattedDate(currentDate)
+            FilterTimePeriod.WEEKLY.name -> formatWeekRange(
+                currentDate.with(DayOfWeek.MONDAY),
+                currentDate.with(DayOfWeek.SUNDAY)
+            )
+            FilterTimePeriod.MONTHLY.name -> getMonthAndYear(currentYear, currentMonth)
+            FilterTimePeriod.YEAR.name -> currentYear.toString()
+            else -> ""
+        }
+        viewMode.postValue(mode)
+        applyFilters()
+    }
 
     fun previousDateWeekMonth() {
         val selectedViewMode = filterList.getSelectedViewMode()
-
-        when (selectedViewMode) {
+        val mode = when (selectedViewMode) {
             FilterTimePeriod.DAILY.name -> {
                 currentDate = currentDate.minusDays(1)
-                viewMode.postValue(getFormattedDate(currentDate))
+                getFormattedDate(currentDate)
             }
             FilterTimePeriod.WEEKLY.name -> {
                 currentDate = currentDate.minusWeeks(1)
-                val startOfWeek = currentDate.with(DayOfWeek.MONDAY)
-                val endOfWeek = startOfWeek.plusDays(6)
-                val weekRange = formatWeekRange(startOfWeek, endOfWeek)
-                viewMode.postValue(weekRange)
+                formatWeekRange(
+                    currentDate.with(DayOfWeek.MONDAY),
+                    currentDate.with(DayOfWeek.SUNDAY)
+                )
             }
             FilterTimePeriod.MONTHLY.name -> {
-                currentMonth -= 1
-                if (currentMonth < 1) {
-                    currentMonth = 12
-                    currentYear -= 1
-                }
-                val monthName = LocalDate.of(currentYear, currentMonth, 1).month.name.capitalize()
-                viewMode.postValue("$monthName, $currentYear")
+                adjustMonth(-1)
+                getMonthAndYear(currentYear, currentMonth)
             }
+            FilterTimePeriod.YEAR.name -> {
+                currentYear -= 1
+                currentYear.toString()
+            }
+            else -> ""
         }
-
+        viewMode.postValue(mode)
         applyFilters()
     }
-
 
     fun nextDateWeekMonth() {
         val selectedViewMode = filterList.getSelectedViewMode()
-
-        when (selectedViewMode) {
+        val mode = when (selectedViewMode) {
             FilterTimePeriod.DAILY.name -> {
                 currentDate = currentDate.plusDays(1)
-                viewMode.postValue(getFormattedDate(currentDate))
+                getFormattedDate(currentDate)
             }
             FilterTimePeriod.WEEKLY.name -> {
                 currentDate = currentDate.plusWeeks(1)
-                val startOfWeek = currentDate.with(DayOfWeek.MONDAY)
-                val endOfWeek = startOfWeek.plusDays(6)
-                val weekRange = formatWeekRange(startOfWeek, endOfWeek)
-                viewMode.postValue(weekRange)
+                formatWeekRange(
+                    currentDate.with(DayOfWeek.MONDAY),
+                    currentDate.with(DayOfWeek.SUNDAY)
+                )
             }
             FilterTimePeriod.MONTHLY.name -> {
-                currentMonth += 1
-                if (currentMonth > 12) {
-                    currentMonth = 1
-                    currentYear += 1
-                }
-                val monthName = LocalDate.of(currentYear, currentMonth, 1).month.name.capitalize()
-                viewMode.postValue("$monthName, $currentYear")
+                adjustMonth(1)
+                getMonthAndYear(currentYear, currentMonth)
             }
+            FilterTimePeriod.YEAR.name -> {
+                currentYear += 1
+                currentYear.toString()
+            }
+            else -> ""
         }
-
+        viewMode.postValue(mode)
         applyFilters()
     }
 
-    private fun formatWeekRange(startOfWeek: LocalDate, endOfWeek: LocalDate): String {
-        val formatter = DateTimeFormatter.ofPattern("MMM dd", Locale.getDefault())
-        val startFormatted = startOfWeek.format(formatter)
-        val endFormatted = endOfWeek.format(formatter)
-        return "$startFormatted - $endFormatted"
-    }
-
-    private fun getFormattedDate(date: LocalDate): String {
-        val formatter = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
-        return formatter.format(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()))
+    private fun adjustMonth(step: Int) {
+        currentMonth += step
+        if (currentMonth > 12) {
+            currentMonth = 1
+            currentYear += 1
+        } else if (currentMonth < 1) {
+            currentMonth = 12
+            currentYear -= 1
+        }
     }
 
 }
 
-class RecordsViewModelProvider(private val repo: TransactionRepository, private val financeRepository: FinanceRepository) : ViewModelProvider.Factory {
+class RecordsViewModelProvider(
+    private val repo: TransactionRepository,
+    private val financeRepository: FinanceRepository
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return RecordsViewModel(repo, financeRepository) as T
     }

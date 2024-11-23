@@ -31,9 +31,10 @@ object AvailableFilters {
                 isMultiSelectable = false,
                 selectionType = SelectionType.CHECKBOX_TYPE,
                 subFilters = listOf(
-                    FilterItem(id = 1, name = FilterTimePeriod.DAILY.name,),
-                    FilterItem(id = 2, name =  FilterTimePeriod.WEEKLY.name,),
-                    FilterItem(id = 3, name =  FilterTimePeriod.MONTHLY.name, isSelected = true),
+                    FilterItem(id = 1, name = FilterTimePeriod.DAILY.name),
+                    FilterItem(id = 2, name = FilterTimePeriod.WEEKLY.name),
+                    FilterItem(id = 3, name = FilterTimePeriod.MONTHLY.name, isSelected = true),
+                    FilterItem(id = 4, name = FilterTimePeriod.YEAR.name),
                 )
             )
         )
@@ -43,6 +44,6 @@ object AvailableFilters {
 }
 
 
-enum class FilterTimePeriod{
-    DAILY, WEEKLY, MONTHLY
+enum class FilterTimePeriod {
+    DAILY, WEEKLY, MONTHLY, YEAR
 }

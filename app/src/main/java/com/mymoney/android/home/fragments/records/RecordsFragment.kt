@@ -89,7 +89,7 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
         binding.filterImg.setOnClickListener {
             activity?.supportFragmentManager?.let { it1 ->
                 RecordFilterBottomSheet(positiveCallBack = {
-                    viewModel.applyFilters()
+                    viewModel.setFilterTimePeriod()
                 }).show(
                     it1,
                     "RecordFilterBottomSheet"
