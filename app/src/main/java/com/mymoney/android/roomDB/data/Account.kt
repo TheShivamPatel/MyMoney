@@ -9,4 +9,5 @@ data class Account (
     val id : Int = 0,
     val name: String,
     val balance: Double,
+    val icon: String,
 )

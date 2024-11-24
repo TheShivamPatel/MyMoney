@@ -11,6 +11,7 @@
         android:layout_width="@dimen/size_50"
         android:layout_height="@dimen/size_50"
         android:layout_margin="@dimen/size_8"
+        android:padding="@dimen/size_12"
         android:background="@drawable/rounded_stroke_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

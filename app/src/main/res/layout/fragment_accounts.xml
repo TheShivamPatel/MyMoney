@@ -61,6 +61,13 @@
                 android:nestedScrollingEnabled="false"
                 android:padding="@dimen/size_16" />
 
+            <include
+                android:id="@+id/addNewAccount"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                layout="@layout/leading_icon_with_title_stroke_bg"/>
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

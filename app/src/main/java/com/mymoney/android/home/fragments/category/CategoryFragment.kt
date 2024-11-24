@@ -17,11 +17,12 @@ import com.mymoney.android.home.fragments.category.viewmodel.CategoryViewModel
 import com.mymoney.android.home.fragments.category.viewmodel.CategoryViewModelProvider
 import com.mymoney.android.home.repository.FinanceRepository
 import com.mymoney.android.popUpFragments.categoryCreationUpdationDialog.CategoryCreationUpdationDialog
-import com.mymoney.android.popUpFragments.categoryCreationUpdationDialog.dialogListener.DialogListener
 import com.mymoney.android.roomDB.daos.CategoryDao
 import com.mymoney.android.roomDB.daos.TransactionDao
+import com.mymoney.android.roomDB.data.Account
 import com.mymoney.android.roomDB.data.Category
 import com.mymoney.android.roomDB.database.MyMoneyDatabase
+import com.mymoney.android.utils.DialogListener
 import com.mymoney.android.viewUtils.ViewUtils
 
 class CategoryFragment : Fragment(R.layout.fragment_category) {
@@ -124,7 +125,7 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
     private fun createNewCategory() {
         CategoryCreationUpdationDialog.showFragment(
             fragmentManager = requireActivity().supportFragmentManager,
-            listener = object : DialogListener{
+            listener = object : DialogListener {
                 override fun onNegativeButtonClick() {
                     ViewUtils.showToast(requireContext(), "Cancel")
                 }
@@ -136,6 +137,10 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
                 override fun onSecondaryButtonClick() {
                     ViewUtils.showToast(requireContext(), "Delete")
                 }
+
+                override fun onAccountPositiveButtonClick(account: Account) {
+
+                }
             },
             dialogType = CategoryCreationUpdationDialog.Companion.CategoryDialogType.CREATE
         )
@@ -144,7 +149,7 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
     private fun openCategoryOperationDialog(category: Category) {
         CategoryCreationUpdationDialog.showFragment(
             fragmentManager = requireActivity().supportFragmentManager,
-            listener = object : DialogListener{
+            listener = object : DialogListener {
                 override fun onNegativeButtonClick() {
                 }
 
@@ -154,6 +159,10 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
 
                 override fun onSecondaryButtonClick() {
                     deleteCategory(category)
+                }
+
+                override fun onAccountPositiveButtonClick(account: Account) {
+
                 }
             },
             dialogType = CategoryCreationUpdationDialog.Companion.CategoryDialogType.UPDATE,

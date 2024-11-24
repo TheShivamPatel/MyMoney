@@ -5,18 +5,18 @@ import com.mymoney.android.roomDB.data.Category
 import com.mymoney.android.roomDB.data.CategoryType
 
 object DefaultAccounts {
-    fun getAccounts() : List<Account> {
+    fun getAccounts(): List<Account> {
         return listOf(
-            Account(name = "Cash", balance = 0.0),
-            Account(name = "Card", balance = 0.0),
-            Account(name = "Savings", balance = 0.0),
+            Account(name = "Cash", balance = 0.0, icon = AccountIcon.CASH.name),
+            Account(name = "Card", balance = 0.0, icon = AccountIcon.CARD.name),
+            Account(name = "Savings", balance = 0.0, icon = AccountIcon.SAVINGS.name),
         )
     }
 }
 
 object DefaultCategories {
 
-    fun getIncomeCategories() : List<Category> {
+    fun getIncomeCategories(): List<Category> {
         return listOf(
             Category(
                 name = "Awards",
@@ -61,7 +61,7 @@ object DefaultCategories {
         )
     }
 
-    fun getExpenseCategories() : List<Category> {
+    fun getExpenseCategories(): List<Category> {
         return listOf(
             Category(
                 name = "Baby",

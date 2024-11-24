@@ -37,13 +37,13 @@ class AccountsViewModel(private val repo: AccountsRepository, private val financ
 
     val totalBalance: LiveData<Double?> = financeRepository.getTotalBalance(TransactionType.INCOME.name, TransactionType.EXPENSE.name)
 
-    fun addAccount(account: Account) {
+    fun saveAccount(account: Account) {
         viewModelScope.launch {
             repo.insertAccount(account)
         }
     }
 
-    fun modifyAccount(account: Account) {
+    fun updateAccount(account: Account) {
         viewModelScope.launch {
             repo.updateAccount(account)
         }
@@ -58,7 +58,6 @@ class AccountsViewModel(private val repo: AccountsRepository, private val financ
     suspend fun getBalanceByAccountId(id: Int): Double? {
         return repo.getBalanceByAccountId(id)
     }
-
 }
 
 class AccountsViewModelProvider(private val repo: AccountsRepository, private val financeRepository: FinanceRepository) : ViewModelProvider.Factory {

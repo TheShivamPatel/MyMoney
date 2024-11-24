@@ -14,8 +14,6 @@
     <string name="previous">Previous</string>
     <string name="title">Title</string>
     <string name="subtitle">Subtitle</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="select_an_account">Select an account</string>
     <string name="apply">Apply</string>
     <string name="add_new_category">Add new category</string>
@@ -28,5 +26,9 @@
     <string name="edit_category">Edit category</string>
     <string name="add_new_category_capital">ADD NEW CATEGORY</string>
     <string name="untitled">Untitled</string>
+    <string name="add_new_account">Add new account</string>
+    <string name="initial_amount">Initial amount</string>
+    <string name="edit_account">Edit account</string>
+    <string name="add_new_account_capital">ADD NEW ACCOUNT</string>
 
 </resources>

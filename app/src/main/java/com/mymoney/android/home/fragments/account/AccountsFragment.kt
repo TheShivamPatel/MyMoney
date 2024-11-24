@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,10 +17,15 @@ import com.mymoney.android.home.fragments.account.repository.AccountsRepository
 import com.mymoney.android.home.fragments.account.viewmodel.AccountsViewModel
 import com.mymoney.android.home.fragments.account.viewmodel.AccountsViewModelProvider
 import com.mymoney.android.home.repository.FinanceRepository
+import com.mymoney.android.popUpFragments.accountCreationUpdationDialog.AccountCreationUpdationDialog
+import com.mymoney.android.popUpFragments.categoryCreationUpdationDialog.CategoryCreationUpdationDialog
 import com.mymoney.android.roomDB.daos.AccountDao
 import com.mymoney.android.roomDB.daos.TransactionDao
 import com.mymoney.android.roomDB.data.Account
+import com.mymoney.android.roomDB.data.Category
 import com.mymoney.android.roomDB.database.MyMoneyDatabase
+import com.mymoney.android.utils.DialogListener
+import com.mymoney.android.viewUtils.ViewUtils
 
 class AccountsFragment : Fragment(R.layout.fragment_accounts) {
 
@@ -57,6 +63,19 @@ class AccountsFragment : Fragment(R.layout.fragment_accounts) {
         viewModel = ViewModelProvider(this, AccountsViewModelProvider(repository, financeRepository))[AccountsViewModel::class.java]
         setUpRecyclerview()
         setUpAccountSummary()
+        setUpViews()
+    }
+
+    private fun setUpViews() {
+        binding.addNewAccount.apply {
+            root.setOnClickListener {
+                createNewAccount()
+            }
+            title.text = getString(R.string.add_new_account_capital)
+            leadingIcon.setImageDrawable(
+                ContextCompat.getDrawable(requireContext(), R.drawable.icon_plus)
+            )
+        }
     }
 
     private fun setUpAccountSummary() {
@@ -76,15 +95,77 @@ class AccountsFragment : Fragment(R.layout.fragment_accounts) {
         binding.accountsRv.layoutManager = LinearLayoutManager(context)
 
         viewModel.allAccounts.observe(viewLifecycleOwner, Observer { accountList ->
-            accountAdapter = AccountsAdapter(accountList) { account ->
-                deleteAccount(account)
+            context?.let {
+                accountAdapter = AccountsAdapter(accountList, it, object : AccountsAdapter.OnItemClick{
+                    override fun onAccountClicked(account: Account) {
+                        openAccountOperationDialog(account)
+                    }
+                })
             }
+
             binding.accountsRv.adapter = accountAdapter
         })
     }
 
+    private fun createNewAccount() {
+        AccountCreationUpdationDialog.showFragment(
+            fragmentManager = requireActivity().supportFragmentManager,
+            listener = object : DialogListener {
+                override fun onNegativeButtonClick() {
+                    ViewUtils.showToast(requireContext(), "Cancel")
+                }
+
+                override fun onPositiveButtonClick(newCategory: Category) {
+                }
+
+                override fun onSecondaryButtonClick() {
+                    ViewUtils.showToast(requireContext(), "Delete")
+                }
+
+                override fun onAccountPositiveButtonClick(account: Account) {
+                    saveNewAccount(account)
+                }
+            },
+            dialogType = AccountCreationUpdationDialog.Companion.AccountDialogType.CREATE
+        )
+    }
+
+    private fun openAccountOperationDialog(account: Account) {
+        AccountCreationUpdationDialog.showFragment(
+            fragmentManager = requireActivity().supportFragmentManager,
+            listener = object : DialogListener {
+                override fun onNegativeButtonClick() {
+                }
+
+                override fun onPositiveButtonClick(newCategory: Category) {
+                }
+
+                override fun onSecondaryButtonClick() {
+                    deleteAccount(account)
+                }
+
+                override fun onAccountPositiveButtonClick(account: Account) {
+                    updateAccount(account)
+                }
+            },
+            dialogType = AccountCreationUpdationDialog.Companion.AccountDialogType.UPDATE,
+            account = account
+        )
+    }
+
+    private fun saveNewAccount(account: Account){
+        viewModel.saveAccount(account)
+        ViewUtils.showToast(requireContext(), "Saved")
+    }
+
+    private fun updateAccount(account: Account) {
+        viewModel.updateAccount(account)
+        ViewUtils.showToast(requireContext(), "Account Updated!")
+    }
+
     private fun deleteAccount(account: Account) {
         viewModel.removeAccount(account)
+        ViewUtils.showToast(requireContext(), "Account Deleted")
     }
 
 }

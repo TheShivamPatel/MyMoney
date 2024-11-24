@@ -3,31 +3,25 @@ package com.mymoney.android.popUpFragments.categoryCreationUpdationDialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.view.WindowManager
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.mymoney.android.R
 import com.mymoney.android.databinding.CategoryOperationDialogBinding
 import com.mymoney.android.databinding.CheckboxItemBinding
-import com.mymoney.android.databinding.ChipItemBinding
 import com.mymoney.android.popUpFragments.categoryCreationUpdationDialog.adapter.CategoryIconsAdapter
-import com.mymoney.android.popUpFragments.categoryCreationUpdationDialog.dialogListener.DialogListener
 import com.mymoney.android.roomDB.data.Category
 import com.mymoney.android.roomDB.data.CategoryType
-import com.mymoney.android.roomDB.data.TransactionType
 import com.mymoney.android.utils.CategoryIcon
+import com.mymoney.android.utils.DialogListener
 import com.mymoney.android.viewUtils.ViewUtils
 import com.mymoney.android.viewUtils.ViewUtils.setRoundedRectangleBackgroundDrawable
-import com.mymoney.android.viewUtils.ViewUtils.showKeyboard
 
 class CategoryCreationUpdationDialog() : DialogFragment() {
 

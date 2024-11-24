@@ -1,14 +1,18 @@
 package com.mymoney.android.home.fragments.account.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mymoney.android.databinding.AccountsItemBinding
 import com.mymoney.android.roomDB.data.Account
+import com.mymoney.android.utils.AccountIcon
 
 class AccountsAdapter(
     private val accountList: List<Account>,
-    private val deleteAccount: (account: Account) -> Unit
+    private val context: Context,
+    private val listener: OnItemClick
 ) :
     RecyclerView.Adapter<AccountsAdapter.AccountViewHolder>() {
 
@@ -16,7 +20,15 @@ class AccountsAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(account: Account) {
             binding.titleTv.text = account.name
-            binding.trailingImg.setOnClickListener { deleteAccount(account) }
+            val categoryIcon = try {
+                AccountIcon.valueOf(account.icon)
+            } catch (e: IllegalArgumentException) {
+                AccountIcon.CASH
+            }
+            binding.imageView.setImageDrawable(
+                ContextCompat.getDrawable(context, categoryIcon.drawableId)
+            )
+            binding.trailingImg.setOnClickListener { listener.onAccountClicked(account) }
             binding.subtitleTv.text = "Balance: ₹${account.balance}"
         }
     }
@@ -36,4 +48,9 @@ class AccountsAdapter(
     }
 
     override fun getItemCount() = accountList.size
+
+    interface OnItemClick {
+        fun onAccountClicked(account: Account)
+    }
+
 }

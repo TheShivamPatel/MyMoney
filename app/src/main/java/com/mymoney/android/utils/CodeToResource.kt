@@ -2,14 +2,20 @@ package com.mymoney.android.utils
 
 import com.mymoney.android.R
 
-//fun getDrawableIdForIcon(symbol: String): Int {
-//    return when (symbol.uppercase()) {
-//        "SALARY" -> R.drawable.vector_salary
-//        "AWARDS" -> R.drawable.vector_award
-//        "REFUNDS" -> R.drawable.vector_refunds
-//        else -> R.drawable.vector_Sale
-//    }
-//}
+enum class AccountIcon(val drawableId: Int) {
+    CASH(R.drawable.icon_tag),
+    CARD(R.drawable.icon_tag),
+    SAVINGS(R.drawable.icon_tag),
+    VISA(R.drawable.icon_tag),
+    WALLET(R.drawable.icon_tag),
+    ONLINE(R.drawable.icon_tag),
+    LOCKER(R.drawable.icon_tag),
+    BANK(R.drawable.icon_tag),
+    STOCKS(R.drawable.icon_tag),
+    CRYPTO(R.drawable.icon_tag),
+    GOLD(R.drawable.icon_tag),
+    PROPERTY(R.drawable.icon_tag),
+}
 
 enum class CategoryIcon(val drawableId: Int) {
     AWARDS(R.drawable.icon_tag),
