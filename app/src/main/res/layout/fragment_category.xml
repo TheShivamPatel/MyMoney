@@ -81,6 +81,18 @@
                 android:nestedScrollingEnabled="false"
                 android:padding="@dimen/size_16" />
 
+            <include
+                android:id="@+id/addNewCategory"
+                android:layout_height="wrap_content"
+                android:layout_width="@dimen/size_200"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/size_10"
+                layout="@layout/leading_icon_with_title_stroke_bg"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_20"/>
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

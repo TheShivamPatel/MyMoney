@@ -21,6 +21,7 @@ import com.mymoney.android.home.repository.FinanceRepository
 import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.RecordFilterBottomSheet
 import com.mymoney.android.roomDB.daos.TransactionDao
 import com.mymoney.android.roomDB.database.MyMoneyDatabase
+import com.mymoney.android.viewUtils.ViewUtils
 
 class RecordsFragment : Fragment(R.layout.fragment_records) {
 
@@ -61,6 +62,9 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
             requireActivity(),
             RecordsViewModelProvider(repository, financeRepository)
         )[RecordsViewModel::class.java]
+
+        viewModel.observeRecords()
+
         setUpViewMode()
         setUpOnClick()
         setUpAccountSummary()
@@ -103,6 +107,7 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
     private fun setUpRecyclerView() {
         binding.recordsRv.layoutManager = LinearLayoutManager(context)
         viewModel.allRecords.observe(viewLifecycleOwner, Observer { records ->
+            context?.let { ViewUtils.showToast(it, records.size.toString()) }
             recordsAdapter = context?.let {
                 RecordsAdapter(records, it, object : RecordsAdapter.ItemClickListener {
                     override fun onItemClick(id: Int) {
@@ -115,5 +120,4 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
             binding.recordsRv.adapter = recordsAdapter
         })
     }
-
 }

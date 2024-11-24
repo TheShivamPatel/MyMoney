@@ -42,6 +42,18 @@ class CategoryViewModel(private val repo: CategoryRepository, private val financ
         }
     }
 
+    fun saveCategory(category: Category) {
+        viewModelScope.launch {
+            repo.insertCategory(category)
+        }
+    }
+
+    fun updateCategory(category: Category) {
+        viewModelScope.launch {
+            repo.updateCategory(category)
+        }
+    }
+
     val totalIncome: LiveData<Double?> = financeRepository.getTotalIncome(TransactionType.INCOME.name)
 
     val totalExpense: LiveData<Double?> = financeRepository.getTotalExpense(TransactionType.EXPENSE.name)

@@ -23,7 +23,7 @@
     <style name="secondaryButtonStyle" parent="Widget.AppCompat.Button">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/size_56</item>
-        <item name="android:background">@drawable/rounded_secondary_button_bg</item>
+        <item name="android:background">@drawable/rounded_primary_stroke_bg</item>
         <item name="android:textColor">@color/primary_dark_color</item>
         <item name="android:textSize">@dimen/button_text_size</item>
         <item name="textAllCaps">false</item>

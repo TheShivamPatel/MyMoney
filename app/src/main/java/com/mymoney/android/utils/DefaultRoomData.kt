@@ -14,7 +14,6 @@ object DefaultAccounts {
     }
 }
 
-
 object DefaultCategories {
 
     fun getIncomeCategories() : List<Category> {

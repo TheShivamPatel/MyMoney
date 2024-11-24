@@ -52,11 +52,7 @@ class RecordsViewModel(
     private var currentYear = currentDate.year
     private var lastSelectedViewMode: String = FilterTimePeriod.DAILY.name
 
-    init {
-        observeRecords()
-    }
-
-    private fun observeRecords() {
+    fun observeRecords() {
         repo.getAllTransactionsWithDetails().observeForever { response ->
             response?.let {
                 val dateTimeFormatter =

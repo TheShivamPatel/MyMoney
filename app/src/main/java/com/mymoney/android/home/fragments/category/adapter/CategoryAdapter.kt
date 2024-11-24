@@ -12,7 +12,7 @@ import com.mymoney.android.utils.CategoryIcon
 class CategoryAdapter(
     private val context: Context,
     private val categoryList: List<Category>,
-    private val deleteCategory: (category: Category) -> Unit
+    private val listener: OnItemClick
 ) :
     RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
@@ -28,7 +28,7 @@ class CategoryAdapter(
             binding.leadingImg.setImageDrawable(
                 ContextCompat.getDrawable(context, categoryIcon.drawableId)
             )
-            binding.trailingImg.setOnClickListener { deleteCategory(category) }
+            binding.trailingImg.setOnClickListener { listener.onCategoryClicked(category) }
         }
     }
 
@@ -47,4 +47,9 @@ class CategoryAdapter(
     }
 
     override fun getItemCount() = categoryList.size
+
+    interface OnItemClick {
+        fun onCategoryClicked(category: Category)
+    }
+
 }
