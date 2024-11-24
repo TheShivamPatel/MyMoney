@@ -28,4 +28,5 @@ interface CategoryDao{
 
     @Query("SELECT COUNT(*) FROM mymoney_category_table WHERE type = :type")
     suspend fun getCategoryCount(type: String): Int
+
 }

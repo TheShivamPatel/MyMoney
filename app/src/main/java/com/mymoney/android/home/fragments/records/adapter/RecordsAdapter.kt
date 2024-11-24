@@ -12,13 +12,17 @@ import com.mymoney.android.roomDB.data.TransactionType
 import com.mymoney.android.roomDB.data.TransactionWithDetails
 import com.mymoney.android.utils.CategoryIcon
 
-class RecordsAdapter(private val recordsList: List<TransactionWithDetails>, private val context: Context) :
+class RecordsAdapter(
+    private val recordsList: List<TransactionWithDetails>,
+    private val context: Context,
+    private val listener: ItemClickListener
+) :
     RecyclerView.Adapter<RecordsAdapter.RecordsViewHolder>() {
 
     inner class RecordsViewHolder(private val binding: RecordsItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(record: TransactionWithDetails) {
-            if (record.type != TransactionType.TRANSFER.name){
+            if (record.type != TransactionType.TRANSFER.name) {
                 binding.titleTv.text = record.categoryName
             }
             binding.subtitleTv.text = record.type
@@ -30,12 +34,14 @@ class RecordsAdapter(private val recordsList: List<TransactionWithDetails>, priv
                         ContextCompat.getColor(binding.root.context, R.color.red_400)
                     )
                 }
+
                 TransactionType.INCOME.name -> {
                     binding.tvTrailing.text = "₹${record.amount}"
                     binding.tvTrailing.setTextColor(
                         ContextCompat.getColor(binding.root.context, R.color.green_500)
                     )
                 }
+
                 else -> {
                     binding.tvTrailing.text = "₹${record.amount}"
                     binding.tvTrailing.setTextColor(
@@ -53,10 +59,10 @@ class RecordsAdapter(private val recordsList: List<TransactionWithDetails>, priv
                 binding.view.visibility = View.GONE
             }
 
-            if(adapterPosition == recordsList.size-1 || record.date != recordsList[adapterPosition + 1].date){
-                binding.view2.visibility =  View.GONE
-            }else{
-                binding.view2.visibility =  View.VISIBLE
+            if (adapterPosition == recordsList.size - 1 || record.date != recordsList[adapterPosition + 1].date) {
+                binding.view2.visibility = View.GONE
+            } else {
+                binding.view2.visibility = View.VISIBLE
             }
 
             if (record.type != TransactionType.TRANSFER.name) {
@@ -69,6 +75,8 @@ class RecordsAdapter(private val recordsList: List<TransactionWithDetails>, priv
                     ContextCompat.getDrawable(context, categoryIcon.drawableId)
                 )
             }
+
+            binding.root.setOnClickListener { listener.onItemClick(record.transactionId) }
         }
     }
 
@@ -83,5 +91,9 @@ class RecordsAdapter(private val recordsList: List<TransactionWithDetails>, priv
 
     override fun onBindViewHolder(holder: RecordsViewHolder, position: Int) {
         holder.bind(recordsList[position])
+    }
+
+    interface ItemClickListener {
+        fun onItemClick(id: Int)
     }
 }

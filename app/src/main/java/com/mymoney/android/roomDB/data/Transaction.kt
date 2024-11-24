@@ -14,9 +14,8 @@ data class Transaction(
     val time: String?,
     val amount: Double,
     val type: String,
-    val category_id: Int?,
-    val account_id: Int?,
     val from_account_id: Int?,
+    val category_id: Int?,
     val to_account_id: Int?,
     val note: String?
 )
@@ -36,7 +35,6 @@ data class TransactionWithDetails(
     val categoryName: String?,
     val categoryIcon: String?,
     val categoryType: String?,
-    val accountName: String?,
     val fromAccountName: String?,
     val toAccountName: String?,
     val note: String?

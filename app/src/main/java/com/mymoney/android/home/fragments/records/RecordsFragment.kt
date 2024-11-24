@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mymoney.android.R
 import com.mymoney.android.addEditRecord.AddEditRecordActivity
+import com.mymoney.android.addEditRecord.AddEditRecordActivity.Companion.TRANSACTION_ID
 import com.mymoney.android.addEditRecord.repository.TransactionRepository
 import com.mymoney.android.databinding.FragmentRecordsBinding
 import com.mymoney.android.home.fragments.records.adapter.RecordsAdapter
@@ -102,7 +103,15 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
     private fun setUpRecyclerView() {
         binding.recordsRv.layoutManager = LinearLayoutManager(context)
         viewModel.allRecords.observe(viewLifecycleOwner, Observer { records ->
-            recordsAdapter = context?.let { RecordsAdapter(records, it) }
+            recordsAdapter = context?.let {
+                RecordsAdapter(records, it, object : RecordsAdapter.ItemClickListener {
+                    override fun onItemClick(id: Int) {
+                        val intent = Intent(context, AddEditRecordActivity::class.java)
+                        intent.putExtra(TRANSACTION_ID, id)
+                        startActivity(intent)
+                    }
+                })
+            }
             binding.recordsRv.adapter = recordsAdapter
         })
     }

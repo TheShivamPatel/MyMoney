@@ -1,7 +1,10 @@
 package com.mymoney.android.addEditRecord
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -14,15 +17,18 @@ import com.mymoney.android.addEditRecord.viewmodel.AddEditRecordViewModel
 import com.mymoney.android.addEditRecord.viewmodel.AddEditRecordViewModelProvider
 import com.mymoney.android.roomDB.data.TransactionType
 import com.mymoney.android.databinding.ActivityAddEditRecordBinding
+import com.mymoney.android.databinding.ChipItemBinding
 import com.mymoney.android.databinding.LeadingIconTitleSelectableViewBinding
 import com.mymoney.android.databinding.LeadingIconWithTextBinding
 import com.mymoney.android.databinding.LeadingIconWithTitleStrokeBgBinding
 import com.mymoney.android.popUpFragments.accountsBottomSheet.AccountsBottomSheet
 import com.mymoney.android.popUpFragments.categoriesBottomSheet.CategoriesBottomSheet
+import com.mymoney.android.roomDB.daos.CategoryDao
 import com.mymoney.android.roomDB.daos.TransactionDao
 import com.mymoney.android.roomDB.data.Transaction
 import com.mymoney.android.roomDB.database.MyMoneyDatabase
 import com.mymoney.android.viewUtils.ViewUtils
+import com.mymoney.android.viewUtils.ViewUtils.setStatusBarColor
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -33,8 +39,13 @@ class AddEditRecordActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddEditRecordBinding
     private lateinit var viewModel: AddEditRecordViewModel
     private lateinit var repository: TransactionRepository
-    private var selectedTransactionType: TransactionType? = null
+    private var selectedTransactionType: TransactionType = TransactionType.EXPENSE
     private lateinit var transactionDao: TransactionDao
+    private var transactionId: Int? = null
+
+    companion object {
+        const val TRANSACTION_ID = "transaction_id"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,9 +56,18 @@ class AddEditRecordActivity : AppCompatActivity() {
         repository = TransactionRepository(transactionDao)
         viewModel = ViewModelProvider(
             this,
-            AddEditRecordViewModelProvider(repository!!)
+            AddEditRecordViewModelProvider(repository)
         )[AddEditRecordViewModel::class.java]
 
+        transactionId = intent.getIntExtra(TRANSACTION_ID, 0)
+
+        if (transactionId != 0) {
+            viewModel.loadTransaction(transactionId!!)
+            binding.deleteImgBtn.visibility = View.VISIBLE
+        }
+
+        setUpOnClick()
+        setUpStatusBar()
         setUpObservers()
         setUpTopActions()
         setUpChipGroup()
@@ -55,7 +75,49 @@ class AddEditRecordActivity : AppCompatActivity() {
         setUpSelectType()
     }
 
+    private fun setUpOnClick() {
+        binding.deleteImgBtn.setOnClickListener {
+            transactionId?.let { it1 ->
+                viewModel.deleteRecord(
+                    it1
+                )
+            }
+            finish()
+        }
+
+    }
+
+    private fun setUpStatusBar() {
+        ViewUtils.addLightStatusBar(this@AddEditRecordActivity)
+        setStatusBarColor(
+            this@AddEditRecordActivity,
+            ContextCompat.getColor(this@AddEditRecordActivity, R.color.green_500)
+        )
+    }
+
     private fun setUpObservers() {
+
+        viewModel.transactionToEdit.observe(this, Observer { transaction ->
+            transaction?.let {
+                binding.edtAmount.setText(it.amount.toString())
+                binding.edtNote.setText(it.note)
+                viewModel.setPickedDate(it.date.toString())
+                viewModel.setPickedTime(it.time.toString())
+                viewModel.setTransactionType(TransactionType.valueOf(it.type))
+                setUpChipGroup()
+                viewModel.setPickedType1Value(it.from_account_id!!)
+                fetchFromAccountNameAndUpdateUI(it.from_account_id)
+                if (selectedTransactionType.name == TransactionType.TRANSFER.name) {
+                    viewModel.setPickedType2Value(it.to_account_id!!)
+                    fetchToAccountNameAndUpdateUI(it.to_account_id)
+                } else {
+                    viewModel.setPickedType2Value(it.category_id!!)
+                    fetchCategoryNameAndUpdateUI(it.category_id)
+                }
+                binding.edtNote.setText(it.note)
+            }
+        })
+
         viewModel.pickedDate.observe(this, Observer { date ->
             binding.pickDateLayout.title.text = date
         })
@@ -68,8 +130,26 @@ class AddEditRecordActivity : AppCompatActivity() {
             selectedTransactionType = type
             setUpSelectType()
         })
-
     }
+
+    private fun fetchFromAccountNameAndUpdateUI(accountId: Int) {
+        viewModel.fetchAccountName(accountId) { accountName ->
+            binding.selectType1.tvSubtitle.text = accountName
+        }
+    }
+
+    private fun fetchToAccountNameAndUpdateUI(accountId: Int) {
+        viewModel.fetchAccountName(accountId) { accountName ->
+            binding.selectType2.tvSubtitle.text = accountName
+        }
+    }
+
+    private fun fetchCategoryNameAndUpdateUI(categoryId: Int) {
+        viewModel.fetchCategoryName(categoryId) { categoryName ->
+            binding.selectType2.tvSubtitle.text = categoryName
+        }
+    }
+
 
     private fun setUpTopActions() {
 
@@ -127,7 +207,6 @@ class AddEditRecordActivity : AppCompatActivity() {
                     context = this
                 ) {
                     AccountsBottomSheet() {
-                        ViewUtils.showToast(this, "$it Selected")
                         viewModel.setPickedType1Value(it.id)
                         binding.selectType1.tvSubtitle.text = it.name
                     }.show(supportFragmentManager, "AccountsBottomSheet")
@@ -141,7 +220,6 @@ class AddEditRecordActivity : AppCompatActivity() {
                     context = this
                 ) {
                     AccountsBottomSheet() {
-                        ViewUtils.showToast(this, "$it Selected")
                         binding.selectType2.tvSubtitle.text = it.name
                         viewModel.setPickedType2Value(it.id)
                     }.show(supportFragmentManager, "AccountsBottomSheet")
@@ -157,7 +235,6 @@ class AddEditRecordActivity : AppCompatActivity() {
                     context = this
                 ) {
                     AccountsBottomSheet() {
-                        ViewUtils.showToast(this, "$it Selected")
                         binding.selectType1.tvSubtitle.text = it.name
                         viewModel.setPickedType1Value(it.id)
                     }.show(supportFragmentManager, "AccountsBottomSheet")
@@ -172,13 +249,11 @@ class AddEditRecordActivity : AppCompatActivity() {
                 ) {
                     if (selectedTransactionType == TransactionType.EXPENSE) {
                         CategoriesBottomSheet(CategoriesBottomSheet.Companion.DialogType.TYPE_EXTEND_EXPENSE) {
-                            ViewUtils.showToast(this, "$it Selected")
                             binding.selectType2.tvSubtitle.text = it.name
                             viewModel.setPickedType2Value(it.id)
                         }.show(supportFragmentManager, "CategoriesBottomSheet")
                     } else {
                         CategoriesBottomSheet(CategoriesBottomSheet.Companion.DialogType.TYPE_SELECT_INCOME) {
-                            ViewUtils.showToast(this, "$it Selected")
                             binding.selectType2.tvSubtitle.text = it.name
                             viewModel.setPickedType2Value(it.id)
                         }.show(supportFragmentManager, "CategoriesBottomSheet")
@@ -233,41 +308,59 @@ class AddEditRecordActivity : AppCompatActivity() {
     }
 
     private fun setUpChipGroup() {
+        bindChipItem(binding.incomeChip, TransactionType.INCOME)
+        bindChipItem(binding.expenseChip, TransactionType.EXPENSE)
+        bindChipItem(binding.transferChip, TransactionType.TRANSFER)
+    }
 
-        binding.chipsGroup.setOnCheckedStateChangeListener { group, checkedIds ->
-            if (checkedIds.isNotEmpty()) {
-                val selectedChipId = checkedIds[0]
-                selectedTransactionType = when (selectedChipId) {
-                    binding.option1.id -> {
-                        ViewUtils.showToast(this, "Income selected")
-                        TransactionType.INCOME
-                    }
+    private fun bindChipItem(
+        chipItemBinding: ChipItemBinding,
+        transactionType: TransactionType
+    ) {
+        chipItemBinding.tvFilterTitle.text = transactionType.name
 
-                    binding.option2.id -> {
-                        ViewUtils.showToast(this, "Expense selected")
-                        TransactionType.EXPENSE
-                    }
-
-                    binding.option3.id -> {
-                        ViewUtils.showToast(this, "Transfer selected")
-                        TransactionType.TRANSFER
-                    }
-
-                    else -> null
-                }
-                selectedTransactionType?.let {
-                    viewModel.setTransactionType(it)
-                }
-            } else {
-                ViewUtils.showToast(this, "No option selected")
-                selectedTransactionType = null
-                viewModel.setTransactionType(TransactionType.EXPENSE)
-            }
-            setUpSelectType()
+        val isSelected = transactionType == selectedTransactionType
+        handleChipStatus(chipItemBinding, isSelected)
+        if (isSelected) {
+            viewModel.setTransactionType(selectedTransactionType)
         }
 
-        viewModel.setTransactionType(TransactionType.EXPENSE)
+        chipItemBinding.root.setOnClickListener {
+            if (chipItemBinding.root.isSelected && isOnlyChipSelected()) {
+                return@setOnClickListener
+            }
+            updateChipSelection(transactionType)
+        }
+    }
 
+    private fun isOnlyChipSelected(): Boolean {
+        return listOf(
+            binding.incomeChip.root.isSelected,
+            binding.expenseChip.root.isSelected,
+            binding.transferChip.root.isSelected
+        ).count { it } == 1
+    }
+
+    private fun updateChipSelection(selectedType: TransactionType) {
+        handleChipStatus(binding.incomeChip, selectedType == TransactionType.INCOME)
+        handleChipStatus(binding.expenseChip, selectedType == TransactionType.EXPENSE)
+        handleChipStatus(binding.transferChip, selectedType == TransactionType.TRANSFER)
+
+        viewModel.setTransactionType(selectedType)
+    }
+
+    private fun handleChipStatus(
+        chipItemBinding: ChipItemBinding,
+        isSelected: Boolean
+    ) {
+        chipItemBinding.root.isSelected = isSelected
+        chipItemBinding.tvFilterTitle.setTextColor(
+            if (isSelected) Color.WHITE else ContextCompat.getColor(
+                binding.root.context,
+                R.color.green_500
+            )
+        )
+        chipItemBinding.root.setBackgroundResource(if (isSelected) R.drawable.rounded_primary_button_bg else R.drawable.rounded_primary_stroke_bg)
     }
 
     private fun datePicker() {
@@ -321,23 +414,23 @@ class AddEditRecordActivity : AppCompatActivity() {
         }
 
         return Transaction(
+            id = transactionId ?: 0,
             date = viewModel.pickedDate.value,
             time = viewModel.pickedTime.value,
             amount = amount,
             type = transactionType.toString(),
             category_id = transactionIds.category_id,
-            account_id = transactionIds.account_id,
             from_account_id = transactionIds.from_account_id,
             to_account_id = transactionIds.to_account_id,
             note = binding.edtNote.text.toString()
         )
     }
 
+
     private fun onSaveTransaction() {
         val transaction = createTransaction()
         if (transaction != null) {
-            viewModel.saveTransaction(transaction)
-            ViewUtils.showToast(this, "Transaction Saved!")
+            viewModel.saveTransaction(transaction, this)
         }
     }
 
@@ -349,18 +442,16 @@ class AddEditRecordActivity : AppCompatActivity() {
         return when (transactionType) {
             TransactionType.INCOME, TransactionType.EXPENSE -> {
                 TransactionIds(
-                    account_id = type1,
+                    from_account_id = type1,
                     category_id = type2,
-                    from_account_id = null,
                     to_account_id = null
                 )
             }
 
             TransactionType.TRANSFER -> {
                 TransactionIds(
-                    account_id = null,
-                    category_id = null,
                     from_account_id = type1,
+                    category_id = null,
                     to_account_id = type2
                 )
             }
@@ -368,9 +459,8 @@ class AddEditRecordActivity : AppCompatActivity() {
     }
 
     data class TransactionIds(
-        val account_id: Int?,
-        val category_id: Int?,
         val from_account_id: Int?,
+        val category_id: Int?,
         val to_account_id: Int?
     )
 }

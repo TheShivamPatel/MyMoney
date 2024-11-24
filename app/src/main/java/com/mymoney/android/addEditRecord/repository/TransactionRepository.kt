@@ -1,11 +1,15 @@
 package com.mymoney.android.addEditRecord.repository
 
+import com.mymoney.android.roomDB.daos.AccountDao
+import com.mymoney.android.roomDB.daos.CategoryDao
 import com.mymoney.android.roomDB.daos.TransactionDao
 import com.mymoney.android.roomDB.data.Transaction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class TransactionRepository(private val transactionDao: TransactionDao) {
+class TransactionRepository(
+    private val transactionDao: TransactionDao
+) {
 
     fun getAllTransactions() = transactionDao.getAllTransactions()
 
@@ -23,9 +27,21 @@ class TransactionRepository(private val transactionDao: TransactionDao) {
         }
     }
 
-    suspend fun deleteTransaction(transaction: Transaction) {
+    suspend fun getTransactionById(transactionId: Int): Transaction? {
+        return transactionDao.getTransactionById(transactionId)
+    }
+
+    suspend fun deleteTransaction(transactionId: Int) {
         withContext(Dispatchers.IO) {
-            transactionDao.deleteTransaction(transaction)
+            transactionDao.deleteTransaction(transactionId)
         }
+    }
+
+    suspend fun getCategoryNameById(id: Int): String {
+        return transactionDao.getCategoryNameById(id)
+    }
+
+    suspend fun getAccountNameById(id: Int): String {
+        return transactionDao.getAccountNameById(id)
     }
 }
