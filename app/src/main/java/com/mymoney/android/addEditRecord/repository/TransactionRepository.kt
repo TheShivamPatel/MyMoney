@@ -1,7 +1,5 @@
 package com.mymoney.android.addEditRecord.repository
 
-import com.mymoney.android.roomDB.daos.AccountDao
-import com.mymoney.android.roomDB.daos.CategoryDao
 import com.mymoney.android.roomDB.daos.TransactionDao
 import com.mymoney.android.roomDB.data.Transaction
 import kotlinx.coroutines.Dispatchers

@@ -1,16 +1,13 @@
 package com.mymoney.android.home.fragments.category.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mymoney.android.databinding.LeadingIconTitleTrailingIconItemBinding
 import com.mymoney.android.roomDB.data.Category
 import com.mymoney.android.utils.CategoryIcon
 
 class CategoryAdapter(
-    private val context: Context,
     private val categoryList: List<Category>,
     private val listener: OnItemClick
 ) :
@@ -20,14 +17,7 @@ class CategoryAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(category: Category) {
             binding.tvTitle.text = category.name
-            val categoryIcon = try {
-                CategoryIcon.valueOf(category.icon)
-            } catch (e: IllegalArgumentException) {
-                CategoryIcon.SALE
-            }
-            binding.leadingImg.setImageDrawable(
-                ContextCompat.getDrawable(context, categoryIcon.drawableId)
-            )
+            binding.leadingImg.setImageResource(CategoryIcon.valueOf(category.icon).drawableId)
             binding.trailingImg.setOnClickListener { listener.onCategoryClicked(category) }
         }
     }

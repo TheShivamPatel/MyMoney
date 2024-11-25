@@ -99,25 +99,23 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
         binding.rvExpenseCategories.layoutManager = LinearLayoutManager(context)
 
         viewModel.incomeCategory.observe(viewLifecycleOwner, Observer { categoryList ->
-            incomeCategoryAdapter = context?.let {
-                CategoryAdapter(it, categoryList, object : CategoryAdapter.OnItemClick{
+            incomeCategoryAdapter =
+                CategoryAdapter(categoryList, object : CategoryAdapter.OnItemClick {
                     override fun onCategoryClicked(category: Category) {
                         openCategoryOperationDialog(category)
                     }
                 })
-            }
             binding.rvIncomeCategories.adapter = incomeCategoryAdapter
         })
 
         viewModel.expenseCategory.observe(viewLifecycleOwner, Observer { categoryList ->
             expenseCategoryAdapter =
-                context?.let {
-                    CategoryAdapter(it, categoryList, object : CategoryAdapter.OnItemClick{
-                        override fun onCategoryClicked(category: Category) {
-                            openCategoryOperationDialog(category)
-                        }
-                    })
-                }
+                CategoryAdapter(categoryList, object : CategoryAdapter.OnItemClick {
+                    override fun onCategoryClicked(category: Category) {
+                        openCategoryOperationDialog(category)
+                    }
+                })
+
             binding.rvExpenseCategories.adapter = expenseCategoryAdapter
         })
     }
@@ -175,7 +173,7 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
         ViewUtils.showToast(requireContext(), "Category Deleted")
     }
 
-    private fun saveNewCategory(category: Category){
+    private fun saveNewCategory(category: Category) {
         viewModel.saveCategory(category)
         ViewUtils.showToast(requireContext(), "Saved")
     }

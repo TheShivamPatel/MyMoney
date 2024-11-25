@@ -18,7 +18,6 @@ import com.mymoney.android.R
 import com.mymoney.android.addEditRecord.repository.TransactionRepository
 import com.mymoney.android.databinding.FragmentAnalysisBinding
 import com.mymoney.android.home.fragments.analysis.adapter.RecordsAnalysisAdapter
-import com.mymoney.android.home.fragments.records.adapter.RecordsAdapter
 import com.mymoney.android.home.fragments.records.viewModel.RecordsViewModel
 import com.mymoney.android.home.fragments.records.viewModel.RecordsViewModelProvider
 import com.mymoney.android.home.repository.FinanceRepository
@@ -103,7 +102,7 @@ class AnalysisFragment : Fragment(R.layout.fragment_analysis) {
         binding.recordsOverviewRv.layoutManager = LinearLayoutManager(context)
 
         viewModel.filteredAllTotalExpensesByCategory.observe(viewLifecycleOwner, Observer {categoryPercentageList->
-            adapter = context?.let { RecordsAnalysisAdapter(categoryPercentageList, requireContext()) }
+            adapter = context?.let { RecordsAnalysisAdapter(categoryPercentageList) }
             binding.recordsOverviewRv.adapter = adapter
 
             setUpPieChart(categoryPercentageList)

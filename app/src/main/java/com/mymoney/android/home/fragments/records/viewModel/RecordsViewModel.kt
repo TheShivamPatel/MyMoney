@@ -1,6 +1,5 @@
 package com.mymoney.android.home.fragments.records.viewModel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,7 +10,6 @@ import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.data.Availabl
 import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.data.FilterTimePeriod
 import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.model.FilterType
 import com.mymoney.android.roomDB.data.CategoryExpensePercentage
-import com.mymoney.android.roomDB.data.CategoryExpenseSummary
 import com.mymoney.android.roomDB.data.TransactionType
 import com.mymoney.android.roomDB.data.TransactionWithDetails
 import com.mymoney.android.viewUtils.ViewUtils.formatWeekRange
@@ -254,7 +252,6 @@ class RecordsViewModel(
     val filteredAllTotalExpensesByCategory = MutableLiveData<List<CategoryExpensePercentage>>()
 
     private fun getExpenseAnalysisList() {
-        Log.d("zzz", "getExpenseAnalysisList")
 
         val selectedViewMode = filterList.getSelectedViewMode()
 

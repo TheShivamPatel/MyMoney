@@ -10,7 +10,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mymoney.android.R
-import com.mymoney.android.addEditRecord.repository.TransactionRepository
 import com.mymoney.android.databinding.FragmentAccountsBinding
 import com.mymoney.android.home.fragments.account.adapter.AccountsAdapter
 import com.mymoney.android.home.fragments.account.repository.AccountsRepository
@@ -18,7 +17,6 @@ import com.mymoney.android.home.fragments.account.viewmodel.AccountsViewModel
 import com.mymoney.android.home.fragments.account.viewmodel.AccountsViewModelProvider
 import com.mymoney.android.home.repository.FinanceRepository
 import com.mymoney.android.popUpFragments.accountCreationUpdationDialog.AccountCreationUpdationDialog
-import com.mymoney.android.popUpFragments.categoryCreationUpdationDialog.CategoryCreationUpdationDialog
 import com.mymoney.android.roomDB.daos.AccountDao
 import com.mymoney.android.roomDB.daos.TransactionDao
 import com.mymoney.android.roomDB.data.Account
@@ -46,7 +44,7 @@ class AccountsFragment : Fragment(R.layout.fragment_accounts) {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentAccountsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -60,7 +58,10 @@ class AccountsFragment : Fragment(R.layout.fragment_accounts) {
         }
         repository = AccountsRepository(accountsDao)
         financeRepository = FinanceRepository(transactionDao)
-        viewModel = ViewModelProvider(this, AccountsViewModelProvider(repository, financeRepository))[AccountsViewModel::class.java]
+        viewModel = ViewModelProvider(
+            this,
+            AccountsViewModelProvider(repository, financeRepository)
+        )[AccountsViewModel::class.java]
         setUpRecyclerview()
         setUpAccountSummary()
         setUpViews()
@@ -93,16 +94,12 @@ class AccountsFragment : Fragment(R.layout.fragment_accounts) {
     private fun setUpRecyclerview() {
 
         binding.accountsRv.layoutManager = LinearLayoutManager(context)
-
         viewModel.allAccounts.observe(viewLifecycleOwner, Observer { accountList ->
-            context?.let {
-                accountAdapter = AccountsAdapter(accountList, it, object : AccountsAdapter.OnItemClick{
-                    override fun onAccountClicked(account: Account) {
-                        openAccountOperationDialog(account)
-                    }
-                })
-            }
-
+            accountAdapter = AccountsAdapter(accountList, object : AccountsAdapter.OnItemClick {
+                override fun onAccountClicked(account: Account) {
+                    openAccountOperationDialog(account)
+                }
+            })
             binding.accountsRv.adapter = accountAdapter
         })
     }
@@ -153,7 +150,7 @@ class AccountsFragment : Fragment(R.layout.fragment_accounts) {
         )
     }
 
-    private fun saveNewAccount(account: Account){
+    private fun saveNewAccount(account: Account) {
         viewModel.saveAccount(account)
         ViewUtils.showToast(requireContext(), "Saved")
     }
@@ -167,5 +164,4 @@ class AccountsFragment : Fragment(R.layout.fragment_accounts) {
         viewModel.removeAccount(account)
         ViewUtils.showToast(requireContext(), "Account Deleted")
     }
-
 }

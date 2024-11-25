@@ -70,12 +70,7 @@ class CategoryCreationUpdationDialog() : DialogFragment() {
             this.selectedIcon = selectedIcon.name
         }
         binding.iconsRecyclerView.adapter = adapter
-
-        category?.icon?.let { existingIconName ->
-            adapter.setSelectedIcon(existingIconName)
-            selectedIcon = existingIconName
-        }
-
+        adapter.setSelectedIcon(selectedIcon)
     }
 
     private fun loadCategoryDate() {

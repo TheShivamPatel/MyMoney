@@ -53,9 +53,7 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
             startActivity(Intent(context, AddEditRecordActivity::class.java))
         }
 
-        context?.let {
-            transactionDao = MyMoneyDatabase.getDatabase(it).transactionDao()
-        }
+        context?.let { transactionDao = MyMoneyDatabase.getDatabase(it).transactionDao() }
         financeRepository = FinanceRepository(transactionDao)
         repository = TransactionRepository(transactionDao)
         viewModel = ViewModelProvider(
@@ -108,15 +106,14 @@ class RecordsFragment : Fragment(R.layout.fragment_records) {
         binding.recordsRv.layoutManager = LinearLayoutManager(context)
         viewModel.allRecords.observe(viewLifecycleOwner, Observer { records ->
             context?.let { ViewUtils.showToast(it, records.size.toString()) }
-            recordsAdapter = context?.let {
-                RecordsAdapter(records, it, object : RecordsAdapter.ItemClickListener {
+            recordsAdapter = RecordsAdapter(records, object : RecordsAdapter.ItemClickListener {
                     override fun onItemClick(id: Int) {
                         val intent = Intent(context, AddEditRecordActivity::class.java)
                         intent.putExtra(TRANSACTION_ID, id)
                         startActivity(intent)
                     }
                 })
-            }
+
             binding.recordsRv.adapter = recordsAdapter
         })
     }

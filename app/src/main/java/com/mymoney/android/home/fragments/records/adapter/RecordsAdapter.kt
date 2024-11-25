@@ -1,6 +1,5 @@
 package com.mymoney.android.home.fragments.records.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,6 @@ import com.mymoney.android.utils.CategoryIcon
 
 class RecordsAdapter(
     private val recordsList: List<TransactionWithDetails>,
-    private val context: Context,
     private val listener: ItemClickListener
 ) :
     RecyclerView.Adapter<RecordsAdapter.RecordsViewHolder>() {
@@ -66,14 +64,11 @@ class RecordsAdapter(
             }
 
             if (record.type != TransactionType.TRANSFER.name) {
-                val categoryIcon = try {
-                    CategoryIcon.valueOf(record.categoryIcon!!)
-                } catch (e: IllegalArgumentException) {
-                    CategoryIcon.SALE
+                if (record.categoryIcon != null){
+                    binding.imageView2.setImageResource(CategoryIcon.valueOf(record.categoryIcon).drawableId)
+                }else{
+                    binding.imageView2.setImageResource(CategoryIcon.BILLS.drawableId)
                 }
-                binding.imageView2.setImageDrawable(
-                    ContextCompat.getDrawable(context, categoryIcon.drawableId)
-                )
             }
 
             binding.root.setOnClickListener { listener.onItemClick(record.transactionId) }
@@ -85,9 +80,7 @@ class RecordsAdapter(
         return RecordsViewHolder(binding)
     }
 
-    override fun getItemCount(): Int {
-        return recordsList.size
-    }
+    override fun getItemCount(): Int = recordsList.size
 
     override fun onBindViewHolder(holder: RecordsViewHolder, position: Int) {
         holder.bind(recordsList[position])

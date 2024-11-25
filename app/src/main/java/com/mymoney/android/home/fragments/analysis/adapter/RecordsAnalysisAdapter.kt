@@ -1,15 +1,13 @@
 package com.mymoney.android.home.fragments.analysis.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mymoney.android.databinding.RecordAnalysisItemBinding
 import com.mymoney.android.roomDB.data.CategoryExpensePercentage
 import com.mymoney.android.utils.CategoryIcon
 
-class RecordsAnalysisAdapter(private val recordsList: List<CategoryExpensePercentage>, private val context: Context) :
+class RecordsAnalysisAdapter(private val recordsList: List<CategoryExpensePercentage>) :
     RecyclerView.Adapter<RecordsAnalysisAdapter.RecordsAnalysisViewHolder>() {
 
     inner class RecordsAnalysisViewHolder(private val binding: RecordAnalysisItemBinding) :
@@ -19,16 +17,7 @@ class RecordsAnalysisAdapter(private val recordsList: List<CategoryExpensePercen
             binding.subtitleTv.text = "-₹${record.totalAmount}"
             binding.tvTrailing.text = "${record.percentage}%"
             binding.indicator.progress = record.percentage.toInt()
-
-            val categoryIcon = try {
-                CategoryIcon.valueOf(record.categoryIcon!!)
-            } catch (e: IllegalArgumentException) {
-                CategoryIcon.SALE
-            }
-            binding.imageView2.setImageDrawable(
-                ContextCompat.getDrawable(context, categoryIcon.drawableId)
-            )
-
+            binding.imageView2.setImageResource(CategoryIcon.valueOf(record.categoryIcon!!).drawableId)
         }
     }
 

@@ -3,6 +3,7 @@ package com.mymoney.android.popUpFragments.accountCreationUpdationDialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,7 @@ class AccountCreationUpdationDialog() : DialogFragment() {
     private var dialogType: AccountDialogType? = null
     private var account: Account? = null
     private var selectedIcon: String = AccountIcon.CASH.name
+    private lateinit var adapter: AccountIconsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,23 +62,19 @@ class AccountCreationUpdationDialog() : DialogFragment() {
 
     private fun setUpRV() {
         val icons = AccountIcon.entries
-        binding.iconsRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        val adapter = AccountIconsAdapter(icons) { selectedIcon ->
+        binding.iconsRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        adapter = AccountIconsAdapter(icons) { selectedIcon ->
             this.selectedIcon = selectedIcon.name
         }
         binding.iconsRecyclerView.adapter = adapter
-
-        account?.icon?.let { existingIconName ->
-            adapter.setSelectedIcon(existingIconName)
-            selectedIcon = existingIconName
-        }
-
+        adapter.setSelectedIcon(selectedIcon)
     }
 
     private fun loadAccountData() {
         binding.nameEdt.setText(account?.name)
         binding.initialAmountEdt.setText(account?.balance.toString())
-        this.selectedIcon = account?.icon.toString()
+        this.selectedIcon = account?.icon!!
     }
 
     private fun setupDialog() {
