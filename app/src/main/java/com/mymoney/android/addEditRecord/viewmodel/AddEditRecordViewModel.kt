@@ -76,10 +76,30 @@ class AddEditRecordViewModel(private val repo: TransactionRepository) : ViewMode
         viewModelScope.launch {
             if (transaction.id == 0) {
                 repo.insertTransaction(transaction)
+                accountOperation(transaction)
                 ViewUtils.showToast(context, "Transaction Saved!")
             } else {
                 repo.updateTransaction(transaction)
                 ViewUtils.showToast(context, "Transaction Updated!")
+            }
+        }
+    }
+
+    private fun accountOperation(transaction: Transaction) {
+        if (transaction.type == TransactionType.INCOME.name) {
+            viewModelScope.launch {
+                repo.addAmountToAccount(transaction.from_account_id!!, transaction.amount)
+            }
+        }
+        if (transaction.type == TransactionType.EXPENSE.name) {
+            viewModelScope.launch {
+                repo.subtractAmountToAccount(transaction.from_account_id!!, transaction.amount)
+            }
+        }
+        if (transaction.type == TransactionType.TRANSFER.name) {
+            viewModelScope.launch {
+                repo.subtractAmountToAccount(transaction.from_account_id!!, transaction.amount)
+                repo.addAmountToAccount(transaction.to_account_id!!, transaction.amount)
             }
         }
     }

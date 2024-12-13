@@ -35,5 +35,4 @@ interface AccountDao {
 
     @Query("SELECT COUNT(*) FROM mymoney_account_table")
     suspend fun getAccountCount(): Int
-
 }

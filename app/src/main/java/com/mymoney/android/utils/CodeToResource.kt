@@ -2,6 +2,7 @@ package com.mymoney.android.utils
 
 import com.mymoney.android.R
 
+
 enum class AccountIcon(val drawableId: Int) {
     CASH(R.drawable.icon_tag),
     CARD(R.drawable.icon_tag),

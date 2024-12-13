@@ -24,6 +24,17 @@ import kotlin.math.roundToInt
 
 object ViewUtils {
 
+
+    fun getCurrentDateTime(): Pair<String, String> {
+        val currentTime = System.currentTimeMillis()
+        val timeFormatter = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        val formattedTime = timeFormatter.format(Date(currentTime))
+        val dateFormatter = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
+        val formattedDate = dateFormatter.format(Date(currentTime))
+
+        return Pair(formattedTime, formattedDate)
+    }
+
     fun parseDate(dateString: String?): LocalDate? {
         return try {
             val dateFormat = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
@@ -68,8 +79,6 @@ object ViewUtils {
         val monthName = LocalDate.of(year, month, 1).month.name
         return "$monthName, $year"
     }
-
-
 
     fun showToast(context: Context, message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
@@ -124,7 +133,6 @@ object ViewUtils {
         } catch (e: Exception) {
         }
     }
-
 
     fun dpToPx(dp: Float): Int {
         val density = Resources.getSystem().displayMetrics.density

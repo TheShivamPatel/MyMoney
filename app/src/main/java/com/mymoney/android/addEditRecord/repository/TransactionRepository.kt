@@ -42,4 +42,12 @@ class TransactionRepository(
     suspend fun getAccountNameById(id: Int): String {
         return transactionDao.getAccountNameById(id)
     }
+
+    suspend fun addAmountToAccount(id: Int, amount: Double) {
+        return transactionDao.addAmountToAccount(id, amount)
+    }
+
+    suspend fun subtractAmountToAccount(id: Int, amount: Double) {
+        return transactionDao.subtractAmountToAccount(id, amount)
+    }
 }

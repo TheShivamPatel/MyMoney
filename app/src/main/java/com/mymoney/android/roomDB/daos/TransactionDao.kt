@@ -57,4 +57,9 @@ interface TransactionDao {
     @Query("SELECT name FROM mymoney_category_table WHERE id = :categoryId")
     suspend fun getCategoryNameById(categoryId: Int): String
 
+    @Query("UPDATE mymoney_account_table SET balance = balance + :amount WHERE id = :id")
+    suspend fun addAmountToAccount(id: Int, amount: Double)
+
+    @Query("UPDATE mymoney_account_table SET balance = balance - :amount WHERE id = :id")
+    suspend fun subtractAmountToAccount(id: Int, amount: Double)
 }

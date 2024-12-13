@@ -83,12 +83,13 @@ class AccountCreationUpdationDialog() : DialogFragment() {
 
         if (dialogType?.name == AccountDialogType.UPDATE.name) {
             binding.deleteBtn.visibility = View.VISIBLE
+            binding.inputOpeningAmountLL.visibility = View.GONE
             binding.textView2.text = getString(R.string.edit_account)
         } else {
             binding.deleteBtn.visibility = View.GONE
+            binding.inputOpeningAmountLL.visibility = View.VISIBLE
             binding.textView2.text = getString(R.string.add_new_account)
         }
-
     }
 
     override fun show(manager: FragmentManager, tag: String?) {
