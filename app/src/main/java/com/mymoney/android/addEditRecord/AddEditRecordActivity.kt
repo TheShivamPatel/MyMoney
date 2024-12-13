@@ -1,6 +1,7 @@
 package com.mymoney.android.addEditRecord
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -77,11 +78,13 @@ class AddEditRecordActivity : AppCompatActivity() {
 
     private fun setUpOnClick() {
         binding.deleteImgBtn.setOnClickListener {
-            transactionId?.let { it1 ->
-                viewModel.deleteRecord(
-                    it1
-                )
+
+            val transaction = createTransaction()
+            val resultIntent = Intent().apply {
+                putExtra("new_transaction", transaction)
+                putExtra("delete_transaction", true)
             }
+            setResult(RESULT_OK, resultIntent)
             finish()
         }
 
@@ -426,11 +429,14 @@ class AddEditRecordActivity : AppCompatActivity() {
         )
     }
 
-
     private fun onSaveTransaction() {
         val transaction = createTransaction()
         if (transaction != null) {
-            viewModel.saveTransaction(transaction, this)
+            val resultIntent = Intent().apply {
+                putExtra("new_transaction", transaction)
+            }
+            setResult(RESULT_OK, resultIntent)
+            finish()
         }
     }
 

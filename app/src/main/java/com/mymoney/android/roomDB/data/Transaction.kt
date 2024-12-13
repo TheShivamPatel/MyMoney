@@ -2,6 +2,7 @@ package com.mymoney.android.roomDB.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity(
     tableName = "mymoney_transactions_table",
@@ -18,7 +19,7 @@ data class Transaction(
     val category_id: Int?,
     val to_account_id: Int?,
     val note: String?
-)
+) : Serializable
 
 enum class TransactionType {
     INCOME,

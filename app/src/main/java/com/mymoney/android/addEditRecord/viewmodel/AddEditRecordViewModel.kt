@@ -1,6 +1,5 @@
 package com.mymoney.android.addEditRecord.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.mymoney.android.addEditRecord.repository.TransactionRepository
 import com.mymoney.android.roomDB.data.Transaction
 import com.mymoney.android.roomDB.data.TransactionType
-import com.mymoney.android.viewUtils.ViewUtils
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -72,38 +70,6 @@ class AddEditRecordViewModel(private val repo: TransactionRepository) : ViewMode
         _pickedTime.value = getCurrentTimeFormatted()
     }
 
-    fun saveTransaction(transaction: Transaction, context: Context) {
-        viewModelScope.launch {
-            if (transaction.id == 0) {
-                repo.insertTransaction(transaction)
-                accountOperation(transaction)
-                ViewUtils.showToast(context, "Transaction Saved!")
-            } else {
-                repo.updateTransaction(transaction)
-                ViewUtils.showToast(context, "Transaction Updated!")
-            }
-        }
-    }
-
-    private fun accountOperation(transaction: Transaction) {
-        if (transaction.type == TransactionType.INCOME.name) {
-            viewModelScope.launch {
-                repo.addAmountToAccount(transaction.from_account_id!!, transaction.amount)
-            }
-        }
-        if (transaction.type == TransactionType.EXPENSE.name) {
-            viewModelScope.launch {
-                repo.subtractAmountToAccount(transaction.from_account_id!!, transaction.amount)
-            }
-        }
-        if (transaction.type == TransactionType.TRANSFER.name) {
-            viewModelScope.launch {
-                repo.subtractAmountToAccount(transaction.from_account_id!!, transaction.amount)
-                repo.addAmountToAccount(transaction.to_account_id!!, transaction.amount)
-            }
-        }
-    }
-
     fun loadTransaction(transactionId: Int) {
         viewModelScope.launch {
             val transaction = repo.getTransactionById(transactionId)
@@ -122,12 +88,6 @@ class AddEditRecordViewModel(private val repo: TransactionRepository) : ViewMode
         viewModelScope.launch {
             val categoryName = repo.getCategoryNameById(categoryId)
             callback(categoryName)
-        }
-    }
-
-    fun deleteRecord(transactionId: Int) {
-        viewModelScope.launch {
-            repo.deleteTransaction(transactionId)
         }
     }
 }

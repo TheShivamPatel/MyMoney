@@ -1,23 +1,29 @@
 package com.mymoney.android.home.fragments.records.viewModel
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.mymoney.android.addEditRecord.repository.TransactionRepository
 import com.mymoney.android.home.repository.FinanceRepository
 import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.data.AvailableFilters
 import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.data.FilterTimePeriod
 import com.mymoney.android.popUpFragments.recordsFilterBottomSheet.model.FilterType
 import com.mymoney.android.roomDB.data.CategoryExpensePercentage
+import com.mymoney.android.roomDB.data.Transaction
 import com.mymoney.android.roomDB.data.TransactionType
 import com.mymoney.android.roomDB.data.TransactionWithDetails
+import com.mymoney.android.viewUtils.ViewUtils
 import com.mymoney.android.viewUtils.ViewUtils.formatWeekRange
 import com.mymoney.android.viewUtils.ViewUtils.getFormattedDate
 import com.mymoney.android.viewUtils.ViewUtils.getMonthAndYear
 import com.mymoney.android.viewUtils.ViewUtils.getMonthFromDateString
 import com.mymoney.android.viewUtils.ViewUtils.getYearFromDateString
 import com.mymoney.android.viewUtils.ViewUtils.parseDate
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -285,6 +291,44 @@ class RecordsViewModel(
         }.sortedByDescending { it.percentage }
 
         filteredAllTotalExpensesByCategory.postValue(categoryPercentageList)
+    }
+
+    fun saveTransaction(transaction: Transaction, context: Context) {
+        viewModelScope.launch {
+            if (transaction.id == 0) {
+                repo.insertTransaction(transaction)
+                accountOperation(transaction)
+                ViewUtils.showToast(context, "Transaction Saved!")
+            } else {
+                repo.updateTransaction(transaction)
+                ViewUtils.showToast(context, "Transaction Updated!")
+            }
+        }
+    }
+
+    private fun accountOperation(transaction: Transaction) {
+        if (transaction.type == TransactionType.INCOME.name) {
+            viewModelScope.launch {
+                repo.addAmountToAccount(transaction.from_account_id!!, transaction.amount)
+            }
+        }
+        if (transaction.type == TransactionType.EXPENSE.name) {
+            viewModelScope.launch {
+                repo.subtractAmountToAccount(transaction.from_account_id!!, transaction.amount)
+            }
+        }
+        if (transaction.type == TransactionType.TRANSFER.name) {
+            viewModelScope.launch {
+                repo.subtractAmountToAccount(transaction.from_account_id!!, transaction.amount)
+                repo.addAmountToAccount(transaction.to_account_id!!, transaction.amount)
+            }
+        }
+    }
+
+    fun deleteRecord(transactionId: Int) {
+        viewModelScope.launch {
+            repo.deleteTransaction(transactionId)
+        }
     }
 
 }
